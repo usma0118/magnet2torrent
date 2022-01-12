@@ -8,6 +8,7 @@ argumentparser = "*"
 libtorrent = "*"
 watchdog = "*"
 coloredlogs = "*"
+python-decouple = "*"
 
 [dev-packages]
 

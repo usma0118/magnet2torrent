@@ -16,3 +16,5 @@ A Python based tool that converts magnet links to .torrent files.
 ## Licenses
 
 All code is licensed under the [GPL version 3](http://www.gnu.org/licenses/gpl.html)
+
+This has been inspired by the Magnet2Torrent from https://github.com/danfolkes/Magnet2Torrent.
