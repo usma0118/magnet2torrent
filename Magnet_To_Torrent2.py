@@ -1,26 +1,4 @@
 #!/usr/bin/env python
-'''
-Created on Apr 19, 2012
-@author: dan, Faless
-
-    GNU GENERAL PUBLIC LICENSE - Version 3
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
-    http://www.gnu.org/licenses/gpl-3.0.txt
-
-'''
 
 import shutil
 import tempfile
@@ -29,9 +7,13 @@ import sys
 import libtorrent as lt
 from time import sleep
 from argparse import ArgumentParser
+import coloredlogs, logging
 
 
 def magnet2torrent(magnet, output_name=None):
+    '''
+    Converts magnet links to torrent
+    '''
     if output_name and \
             not pt.isdir(output_name) and \
             not pt.isdir(pt.dirname(pt.abspath(output_name))):
@@ -43,10 +25,7 @@ def magnet2torrent(magnet, output_name=None):
     ses = lt.session()
     params = {
         'save_path': tempdir,
-        'storage_mode': lt.storage_mode_t(2),
-        'paused': False,
-        'auto_managed': True,
-        'duplicate_is_error': True
+        'storage_mode': lt.storage_mode_t(2)
     }
     handle = lt.add_magnet_uri(ses, magnet, params)
 
@@ -86,57 +65,36 @@ def magnet2torrent(magnet, output_name=None):
 
     return output
 
-def main():
-    parser = ArgumentParser(description="A command line tool that converts magnet links in to .torrent files")
-    parser.add_argument('-m','--magnet', help='The magnet url')
-    parser.add_argument('-o','--output', help='The output torrent file name')
+def main():        
+    logger = logging.getLogger(__name__)
+    coloredlogs.install(level='DEBUG',logger=logger,fmt="[ %(levelname)-8s ] [%(asctime)s] %(message)s")
+    
+    parser = ArgumentParser(description="A tool to convert magnet links to .torrent files")
+    monitorparser=parser.add_argument_group("Watch folder for magnet files and conver to torrent")
+    monitorparser.add_argument("--monitor",default=True,action="store_true")
 
-    #
-    # This second parser is created to force the user to provide
-    # the 'output' arg if they provide the 'magnet' arg.
-    #
-    # The current version of argparse does not have support
-    # for conditionally required arguments. That is the reason
-    # for creating the second parser
-    #
-    # Side note: one should look into forking argparse and adding this
-    # feature.
-    #
-    conditionally_required_arg_parser = ArgumentParser(description="A command line tool that converts magnet links in to .torrent files")
-    conditionally_required_arg_parser.add_argument('-m','--magnet', help='The magnet url')
-    conditionally_required_arg_parser.add_argument('-o','--output', help='The output torrent file name', required=True)
+    magnetparser=parser.add_argument_group("Process single magnet file")
+    magnetparser.add_argument('-m','--magnet', help='The magnet url')
+    magnetparser.add_argument('-o','--output', help='The output torrent file name')
 
+    if len(sys.argv) == 1:
+        parser.print_help(sys.stderr)
+        sys.exit(1)
+    
+    args = vars(parser.parse_known_args()[0])
+    
     magnet = None
+    magnet=""
     output_name = None
 
-    #
-    # Attempting to retrieve args using the new method
-    #
-    args = vars(parser.parse_known_args()[0])
-    if args['magnet'] is not None:
-        magnet = args['magnet']
-        argsHack = vars(conditionally_required_arg_parser.parse_known_args()[0])
-        output_name = argsHack['output']
-    if args['output'] is not None and output_name is None:
-        output_name = args['output']
-        if magnet is None:
-            #
-            # This is a special case.
-            # This is when the user provides only the "output" args.
-            # We're forcing him to provide the 'magnet' args in the new method
-            #
-            print ('usage: {0} [-h] [-m MAGNET] -o OUTPUT'.format(sys.argv[0]))
-            print ('{0}: error: argument -m/--magnet is required'.format(sys.argv[0]))
-            sys.exit()
-    #
-    # Defaulting to the old of doing things
-    # 
-    if output_name is None and magnet is None:
-        if len(sys.argv) >= 2:
-            magnet = sys.argv[1]
-        if len(sys.argv) >= 3:
-            output_name = sys.argv[2]
-
+    if args['monitor'] is not None:
+        logger.info('Start folder watcher')
+        sys.exit(0)
+    else:
+        if args['magnet'] is not None:
+            magnet = args['magnet']
+        if args['output'] is not None:
+            output_name = args['output']
     magnet2torrent(magnet, output_name)
 
 
