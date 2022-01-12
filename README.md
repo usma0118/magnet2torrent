@@ -1,7 +1,7 @@
 # Magnet2Torrent
 
 [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://github.com/pre-commit/pre-commit)
-[![CodeFactor](https://www.codefactor.io/repository/github/usma0118/home-headless-server-build/badge?s=e742f736406cba779aefae49b5b261814c0d9a03)](https://www.codefactor.io/repository/github/usma0118/home-headless-server-build)
+[![CodeFactor](https://www.codefactor.io/repository/github/usma0118/magnet2torrent/badge)](https://www.codefactor.io/repository/github/usma0118/magnet2torrent)
 
 A Python based tool that converts magnet links to .torrent files.
 
