@@ -10,8 +10,9 @@ from argparse import ArgumentParser
 import logging
 import coloredlogs
 from decouple import config
-from watchdog.events import LoggingEventHandler
 from pathlib import Path
+from filesystem.folderwatcher import folderwatcher
+from filesystem.FileSystemHandler import FileSystemHandler
 
 
 logger = logging.getLogger(__name__)
@@ -97,15 +98,18 @@ def main():
     if args['output'] is not None:
         output = args['output']
 
+    if len(sys.argv) == 1:
+        logger.warning('No arguments passed, defaulting to monitor mode')
+        args['monitor']='monitor'
 
-    if args['monitor'] is not None or len(sys.argv) == 1:
-        logger.warning('No arguments passed, starting in monitor mode')
-
+    if args['monitor'] is not None:
+        logger.info('Starting monitor mode')
         folder_watch=config('torrent_blackhole')
+        logger.info('blackhole folder: {0}'.format(os.path.abspath(folder_watch)))
         output=config('torent_drop',default=folder_watch)
 
         #TODO: Process existing files 1st
-        logger.info('Processing blackhole folder: {0}'.format(os.path.abspath(folder_watch)))
+        logger.info('Processing existing files: {0}'.format(os.path.abspath(folder_watch)))
         magnets=Path(folder_watch).glob('*.magnet')
         for magnet in magnets:
             logger.info('Processing file: {0}'.format(os.path.basename(magnet)))
@@ -118,11 +122,12 @@ def main():
 
         #TODO: Start file watcher to look for new files.
         logger.info('Start folder watcher on {0}'.format(folder_watch))
-        sys.exit(0)
+        folder_watcher=folderwatcher(folder_watch,FileSystemHandler())
+        folder_watcher.start()
     else:
         if args['magnet'] is not None:
             magnet = args['magnet']
-    magnet2torrent(magnet, output)
+        magnet2torrent(magnet, output)
 
 
 if __name__ == '__main__':

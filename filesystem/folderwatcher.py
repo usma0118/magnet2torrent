@@ -3,9 +3,8 @@ import time
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 
-from watcher.FileSystemHandler import FileSystemHandler
 
-class Watcher:
+class folderwatcher:
 
     def __init__(self, directory='.', handler=FileSystemEventHandler()):
         self.observer = Observer()
@@ -15,7 +14,7 @@ class Watcher:
         coloredlogs.install(level='DEBUG',logger=logger,fmt='[ %(levelname)-8s ] [%(asctime)s] %(message)s')
         self.logger=logger
 
-    def run(self):
+    def start(self):
         self.observer.schedule(
             self.handler, self.directory, recursive=True)
         self.observer.start()
@@ -26,9 +25,4 @@ class Watcher:
         except:
             self.observer.stop()
         self.observer.join()
-        self.logger.debug('\nWatcher Terminated\n')
-
-
-if __name__=='__main__':
-    w = Watcher('.', FileSystemHandler())
-    w.run()
+        self.logger.error('\nWatcher Terminated\n')
