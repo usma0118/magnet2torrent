@@ -2,6 +2,17 @@
 *.torrent
 *.magnet
 watch/*
+/.direnv
+/.env
+/.envrc.local
+/.idea/
+/.pytrakt.json
+/config.json
+/config/
+/dist/
+
+
+.vscode/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
