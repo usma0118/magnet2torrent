@@ -16,7 +16,7 @@ from filesystem.FileSystemHandler import FileSystemHandler
 
 
 logger = logging.getLogger(__name__)
-coloredlogs.install(level='DEBUG',logger=logger,fmt='[ %(levelname)-8s ] [%(asctime)s] %(message)s')
+coloredlogs.install(level='INFO',logger=logger,fmt='[ %(levelname)-8s ] [%(asctime)s] %(message)s')
 
 def magnet2torrent(magnet_uri, output_name=None):
     '''
@@ -47,7 +47,7 @@ def magnet2torrent(magnet_uri, output_name=None):
 
     # download = self.findTorrentByHash(info_hash)
     handle = client.add_torrent(params)
-    logger.debug('Acquiring torrent metadata for hash {}'.format(params.info_hash))
+    logger.info('Acquiring torrent metadata for hash {}'.format(params.info_hash))
     while not handle.has_metadata():
         try:
             sleep(0.1)
@@ -58,7 +58,12 @@ def magnet2torrent(magnet_uri, output_name=None):
             shutil.rmtree(tempdir)
             sys.exit(0)
     client.pause()
-    logger.debug('Processing torrent info')
+
+    if handle.has_metadata():
+        logger.error('Unable to get data for {0}'.format(params.name))
+        client.remove_torrent(handle)
+        shutil.rmtree(tempdir)
+        return
     torinfo = handle.get_torrent_info()
     torfile = lt.create_torrent(torinfo)
 
@@ -118,6 +123,9 @@ def main():
             torrent_path=magnet2torrent(magnet_contents,output)
             if torrent_path is not None:
                 magnet_processed=str(os.path.abspath(magnet))+'.processed'
+                shutil.move(magnet,magnet_processed)
+            else:
+                magnet_processed=str(os.path.abspath(magnet))+'.err'
                 shutil.move(magnet,magnet_processed)
 
         #TODO: Start file watcher to look for new files.
