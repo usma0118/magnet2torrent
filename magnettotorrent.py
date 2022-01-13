@@ -16,7 +16,7 @@ from filesystem.FileSystemHandler import FileSystemHandler
 
 
 logger = logging.getLogger(__name__)
-coloredlogs.install(level='INFO',logger=logger,fmt='[ %(levelname)-8s ] [%(asctime)s] %(message)s')
+coloredlogs.install(level='INFO',logger=logger,fmt='[%(asctime)s] %(message)s')
 
 def magnet2torrent(magnet_uri, output_name=None):
     '''
@@ -48,9 +48,13 @@ def magnet2torrent(magnet_uri, output_name=None):
     # download = self.findTorrentByHash(info_hash)
     handle = client.add_torrent(params)
     logger.info('Acquiring torrent metadata for hash {}'.format(params.info_hash))
+    max=5
     while not handle.has_metadata():
         try:
             sleep(0.1)
+            max -=0.1
+            if max <0:
+                break
         except KeyboardInterrupt:
             logger.debug('Aborting...')
             client.pause()
@@ -59,7 +63,7 @@ def magnet2torrent(magnet_uri, output_name=None):
             sys.exit(0)
     client.pause()
 
-    if handle.has_metadata():
+    if not handle.has_metadata():
         logger.error('Unable to get data for {0}'.format(params.name))
         client.remove_torrent(handle)
         shutil.rmtree(tempdir)
@@ -107,11 +111,12 @@ def main():
         logger.warning('No arguments passed, defaulting to monitor mode')
         args['monitor']='monitor'
 
+
     if args['monitor'] is not None:
         logger.info('Starting monitor mode')
-        folder_watch=config('torrent_blackhole')
+        folder_watch=config('magnet_watch')
         logger.info('blackhole folder: {0}'.format(os.path.abspath(folder_watch)))
-        output=config('torent_drop',default=folder_watch)
+        output=config('torrent_blackhole',default=folder_watch)
 
         #TODO: Process existing files 1st
         logger.info('Processing existing files: {0}'.format(os.path.abspath(folder_watch)))
