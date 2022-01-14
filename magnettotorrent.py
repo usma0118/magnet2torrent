@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+from io import UnsupportedOperation
 import os
 import shutil
 import os.path as pt
@@ -9,7 +10,7 @@ import coloredlogs
 from decouple import config
 from filesystem.folderwatcher import folderwatcher
 from filesystem.FileSystemHandler import FileSystemHandler
-
+from watchdog.events import PatternMatchingEventHandler
 
 logger = logging.getLogger(__name__)
 coloredlogs.install(level=config('log_level'),logger=logger,fmt='[%(asctime)s] %(message)s')
@@ -44,7 +45,14 @@ def magnet2torrent(magnet_uri, output_name=None):
         'save_path': tempdir,
         'storage_mode': lt.storage_mode_t(2)
     }
-    params = lt.parse_magnet_uri(magnet_uri)
+
+    params=None
+    try:
+        params = lt.parse_magnet_uri(magnet_uri)
+    except RuntimeError:
+        logger.error('Invalid magnet uri: {0}, skipping'.format(magnet_uri))
+        return
+
     # prevent downloading
     # https://stackoverflow.com/q/45680113
     if isinstance(params, dict):
@@ -145,7 +153,7 @@ def main():
                 magnet_processed+='.err'
             shutil.move(magnet,magnet_processed)
 
-        folder_watcher=folderwatcher(folder_watch,FileSystemHandler())
+        folder_watcher=folderwatcher(folder_watch,FileSystemHandler(),logger)
         folder_watcher.start()
     else:
         if args['magnet'] is not None:
