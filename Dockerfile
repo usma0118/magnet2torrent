@@ -19,8 +19,6 @@ COPY . /app
 WORKDIR /app
 # Compile sources
 RUN python -m compileall .
-#\
-#&& chmod -R a+rX,g-w .
 
 
 FROM python-slim as runtime
