@@ -15,14 +15,15 @@ class folderwatcher:
         self.logger=logger
 
     def start(self):
+        self.logger.error('Folder watcher is buggy and not stable')
         self.observer.schedule(
             self.handler, self.directory, recursive=True)
         self.observer.start()
-        self.logger.debug('\nWatcher Running in {}/\n'.format(self.directory))
+        self.logger.debug('Folder watcher started monitoring on: {}'.format(self.directory))
         try:
             while True:
                 time.sleep(1)
         except:
             self.observer.stop()
         self.observer.join()
-        self.logger.error('\nWatcher Terminated\n')
+        self.logger.error('Watcher Terminated')

@@ -1,24 +1,34 @@
 #!/usr/bin/env python
 import os
 import shutil
-import tempfile
 import os.path as pt
 import sys
-import libtorrent as lt
-from time import sleep
-from argparse import ArgumentParser
+
 import logging
 import coloredlogs
 from decouple import config
-from pathlib import Path
 from filesystem.folderwatcher import folderwatcher
 from filesystem.FileSystemHandler import FileSystemHandler
 
 
 logger = logging.getLogger(__name__)
-coloredlogs.install(level='INFO',logger=logger,fmt='[%(asctime)s] %(message)s')
+coloredlogs.install(level=config('log_level'),logger=logger,fmt='[%(asctime)s] %(message)s')
+
+trackers=[]
+
+try:
+    import requests
+    trackers_from = 'https://raw.githubusercontent.com/ngosang/trackerslist/master/trackers_all.txt'
+    trackers = requests.get(trackers_from).content.decode('utf8').split('\n\n')[:-1]
+    logger.info('Loaded trackers: {0}'.format(len(trackers)))
+except Exception as e:
+    logger.debug('Failed to get trackers from {}: {}', trackers_from, str(e))
+    trackers = []
 
 def magnet2torrent(magnet_uri, output_name=None):
+    import libtorrent as lt
+    from time import sleep
+    import tempfile
     '''
     Converts magnet links to torrent
     '''
@@ -42,8 +52,8 @@ def magnet2torrent(magnet_uri, output_name=None):
     else:
         params.flags |= lt.add_torrent_params_flags_t.flag_upload_mode
     # https://python.hotexamples.com/examples/libtorrent/-/parse_magnet_uri/python-parse_magnet_uri-function-examples.html
-    # params['info_hash'] = hex_to_hash(str(params['info_hash']).decode('hex'))
     params.save_path=tempdir
+    params.trackers += trackers
 
     # download = self.findTorrentByHash(info_hash)
     handle = client.add_torrent(params)
@@ -90,6 +100,8 @@ def magnet2torrent(magnet_uri, output_name=None):
     return output
 
 def main():
+    from pathlib import Path
+    from argparse import ArgumentParser
     parser = ArgumentParser(description='A tool to convert magnet links to .torrent files')
     monitorparser=parser.add_argument_group('Watch folder for magnet files and conver to torrent')
     monitorparser.add_argument('--monitor',default=True,action='store_true')
@@ -115,26 +127,24 @@ def main():
     if args['monitor'] is not None:
         logger.info('Starting monitor mode')
         folder_watch=config('magnet_watch')
-        logger.info('blackhole folder: {0}'.format(os.path.abspath(folder_watch)))
+        logger.info('Blackhole folder: {0}'.format(os.path.abspath(folder_watch)))
         output=config('torrent_blackhole',default=folder_watch)
 
-        #TODO: Process existing files 1st
         logger.info('Processing existing files: {0}'.format(os.path.abspath(folder_watch)))
         magnets=Path(folder_watch).glob('*.magnet')
         for magnet in magnets:
             logger.info('Processing file: {0}'.format(os.path.basename(magnet)))
             magnet_contents=Path(magnet).read_text()
-            logger.debug('Loading magnet: {0}'.format(magnet_contents))
+            logger.debug('Loading magnet: {0}'.format(magnet.name))
             torrent_path=magnet2torrent(magnet_contents,output)
-            if torrent_path is not None:
-                magnet_processed=str(os.path.abspath(magnet))+'.processed'
-                shutil.move(magnet,magnet_processed)
-            else:
-                magnet_processed=str(os.path.abspath(magnet))+'.err'
-                shutil.move(magnet,magnet_processed)
 
-        #TODO: Start file watcher to look for new files.
-        logger.info('Start folder watcher on {0}'.format(folder_watch))
+            magnet_processed=str(os.path.abspath(magnet))
+            if torrent_path is not None:
+                magnet_processed+='.processed'
+            else:
+                magnet_processed+='.err'
+            shutil.move(magnet,magnet_processed)
+
         folder_watcher=folderwatcher(folder_watch,FileSystemHandler())
         folder_watcher.start()
     else:
@@ -144,4 +154,5 @@ def main():
 
 
 if __name__ == '__main__':
+    #https://github.com/blind-oracle/transmission-trackers/blob/master/transmission-trackers.py
     main()

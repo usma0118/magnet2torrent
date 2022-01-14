@@ -9,6 +9,7 @@ libtorrent = "*"
 watchdog = "*"
 coloredlogs = "*"
 python-decouple = "*"
+requests = "*"
 
 [dev-packages]
 

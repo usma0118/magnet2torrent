@@ -25,8 +25,9 @@ RUN python -m compileall .
 
 FROM python-slim as runtime
 VOLUME [ "/data" ]
+ENV magnet_watch=/data
 # Creates a non-root user with an explicit UID and adds permission to access the /app folder
-RUN adduser -u 5678  magnet2torrent --disabled-password --no-create-home --gecos ""
+RUN adduser -u 1001  magnet2torrent --disabled-password --no-create-home --gecos ""
 COPY --from=python-deps /root/.local/share/virtualenvs/app-*/lib/python3.10/site-packages /usr/local/lib/python3.10/site-packages
 
 WORKDIR /app
