@@ -20,7 +20,6 @@ WORKDIR /app
 # Compile sources
 RUN python -m compileall .
 
-
 FROM python-slim as runtime
 VOLUME [ "/torrent" ]
 ENV magnet_watch=/torrent
