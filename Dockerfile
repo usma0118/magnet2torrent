@@ -6,7 +6,9 @@ ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
 FROM python-alpine3 AS python-deps
+
 RUN pip install pipenv --no-cache-dir
+
 WORKDIR /app
 COPY Pipfile* ./
 RUN pipenv install --deploy --ignore-pipfile
