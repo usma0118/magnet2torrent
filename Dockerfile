@@ -20,6 +20,8 @@ ENV magnet_watch=/torrent
 RUN adduser -u 1001  magnet2torrent --disabled-password --no-create-home --gecos ""
 COPY --from=python-deps /root/.local/share/virtualenvs/app-*/lib/python3.10/site-packages /usr/local/lib/python3.10/site-packages
 
+COPY --chown=magnet2torrent:magnet2torrent . /app
+
 WORKDIR /app
 
 USER magnet2torrent
