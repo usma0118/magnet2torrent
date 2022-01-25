@@ -1,5 +1,6 @@
 import os
 from pathlib import Path
+import shutil
 from watchdog.events import PatternMatchingEventHandler
 from decouple import config
 
@@ -17,7 +18,13 @@ class FileSystemHandler(PatternMatchingEventHandler):
         self.logger.debug(event)
         self.on_action(event.dest_path)
 
-    def on_action(self,src):
-        self.logger.info('Processing file: {0}'.format(os.path.basename(src)))
-        magnet_contents=Path(src).read_text()
-        self.client.magnet2torrent(magnet_contents,config('torrent_blackhole',os.path.dirname(src)))
+    def on_action(self,magnet):
+        magnet_processed=str(os.path.abspath(magnet))
+        self.logger.info('Processing file: {0}'.format(magnet))
+        magnet_contents=Path(magnet).read_text()
+        torrent_path=self.client.magnet2torrent(magnet_contents,config('torrent_blackhole',os.path.dirname(magnet)))
+        if torrent_path is not None:
+            magnet_processed+='.processed'
+        else:
+            magnet_processed+='.err'
+        shutil.move(magnet,magnet_processed)

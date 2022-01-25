@@ -16,6 +16,7 @@ RUN pipenv install --deploy --ignore-pipfile
 FROM python-alpine3 as runtime
 VOLUME [ "/torrent" ]
 ENV magnet_watch=/torrent
+ENV log_level="info"
 # Creates a non-root user with an explicit UID and adds permission to access the /app folder
 RUN adduser -u 1001  magnet2torrent --disabled-password --no-create-home --gecos ""
 COPY --from=python-deps /root/.local/share/virtualenvs/app-*/lib/python3.10/site-packages /usr/local/lib/python3.10/site-packages
