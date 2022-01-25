@@ -8,9 +8,21 @@ import libtorrent as lt
 import shutil
 
 class torrentclient:
+    settings = {
+        'enable_dht': False,
+        'use_dht_as_fallback': False,
+        'enable_lsd': False,
+        'enable_upnp': False,
+        'enable_natpmp': True,
+        'announce_to_all_tiers': True,
+        'announce_to_all_trackers': True,
+        'aio_threads': 4*2,
+        }
+
     def __init__(self,logger,trackers):
         self.logger=logger
         self.trackers=trackers
+        self.torrentclient = lt.session(self.settings)
 
     def magnet2torrent(self,magnet_uri, output_name=None):
         '''
@@ -21,18 +33,6 @@ class torrentclient:
                 not path.isdir(path.dirname(path.abspath(output_name))):
             self.logger.debug('Invalid output folder: {0}'.format(path.dirname(path.abspath(output_name))))
             sys.exit(0)
-
-        settings = {
-        'enable_dht': False,
-        'use_dht_as_fallback': False,
-        'enable_lsd': False,
-        'enable_upnp': False,
-        'enable_natpmp': True,
-        'announce_to_all_tiers': True,
-        'announce_to_all_trackers': True,
-        'aio_threads': 4*2,
-        }
-        torrentclient = lt.session(settings)
 
         params=None
         try:
@@ -51,7 +51,8 @@ class torrentclient:
         # https://python.hotexamples.com/examples/libtorrent/-/parse_magnet_uri/python-parse_magnet_uri-function-examples.html
         tempdir = tempfile.mkdtemp()
         params.save_path=tempdir
-        # TODO: Only add missing trackers
+        ##if not params.isPrivate:
+            # TODO: Only add missing trackers
         params.trackers += self.trackers
 
         # download = self.findTorrentByHash(info_hash)
