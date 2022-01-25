@@ -16,6 +16,11 @@
         <!--[if lt IE 7]>
             <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="#">upgrade your browser</a> to improve your experience.</p>
         <![endif]-->
+<header>
+<nav class="navbar navbar-dark bg-dark">
+  <span class="navbar-brand mb-0 h1">Magnet2Torrent</span>
+</nav>
+</header>
 <div class="container">
 <div class="row">
 	<div class="col-12 col-lg-9">
@@ -39,6 +44,21 @@
 							</tr>
 						</thead>
 						<tbody>
+						{% if files|length<1 %}
+							<tr>
+								<td>
+									<div class="d-flex align-items-center">
+										<div><i class="bx bxs-file-pdf me-2 font-24 text-success"></i>
+										</div>
+										<div class="font-weight-bold text-success"></div>
+									</div>
+								</td>
+								<td></td>
+								<td></td>
+								<td><i class="fa fa-ellipsis-h font-24"></i>
+								</td>
+							</tr>
+						{% endif %}
                          {% for file in files %}
 							<tr>
 								<td>
