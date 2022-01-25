@@ -1,10 +1,9 @@
 import sys
-import os
 from os import path
-import logging
 import tempfile
 from time import sleep
 import libtorrent as lt
+from decouple import config
 import shutil
 
 class torrentclient:
@@ -16,12 +15,35 @@ class torrentclient:
         'enable_natpmp': True,
         'announce_to_all_tiers': True,
         'announce_to_all_trackers': True,
-        'aio_threads': 4*2,
+        'aio_threads': 4*2
         }
 
     def __init__(self,logger,trackers):
         self.logger=logger
         self.trackers=trackers
+        proxy_url={'hostname':config('proxy_hostname',default=''),
+        'port':config('proxy_port',default=''),
+        'username':config('proxy_username',default=''),
+        'password':config('proxy_password',default='')
+        }
+
+        # proxy_url = urlparse(http_proxy)
+        if proxy_url.get('hostname') and proxy_url.get('port'):
+            self.logger.info('Applying proxy settings')
+            self.settings.update({
+                    'proxy_hostname': proxy_url.get('hostname'),
+                    'proxy_port': int(proxy_url.get('port')),
+                    'proxy_type': lt.proxy_type_t.http,
+                    'force_proxy': True,
+                    'anonymous_mode': True,
+                })
+
+        if proxy_url.get('username') or proxy_url.get('password'):
+            self.settings.update({
+                    'proxy_username': proxy_url.get('username'),
+                    'proxy_password': proxy_url.get('password'),
+                    'proxy_type': lt.proxy_type_t.http_pw
+                })
         self.torrentclient = lt.session(self.settings)
 
     def magnet2torrent(self,magnet_uri, output_name=None):
@@ -53,10 +75,10 @@ class torrentclient:
         params.save_path=tempdir
         ##if not params.isPrivate:
             # TODO: Only add missing trackers
-        params.trackers += self.trackers
+        #params.trackers += self.trackers
 
         # download = self.findTorrentByHash(info_hash)
-        handle = torrentclient.add_torrent(params)
+        handle = self.torrentclient.add_torrent(params)
         self.logger.info('Acquiring torrent metadata for hash {}'.format(params.info_hash))
         max=5
         while not handle.has_metadata():
@@ -67,15 +89,15 @@ class torrentclient:
                     break
             except KeyboardInterrupt:
                 self.logger.debug('Aborting...')
-                torrentclient.pause()
+                self.torrentclient.pause()
                 self.logger.debug('Cleanup dir ' + tempdir)
                 shutil.rmtree(tempdir)
                 sys.exit(0)
-        torrentclient.pause()
+        self.torrentclient.pause()
 
         if not handle.has_metadata():
             self.logger.error('Unable to get data for {0}'.format(params.name))
-            torrentclient.remove_torrent(handle)
+            self.torrentclient.remove_torrent(handle)
             shutil.rmtree(tempdir)
             return
 
@@ -96,6 +118,6 @@ class torrentclient:
             f.write(torcontent)
             self.logger.info('Torrent saved: {0}'.format(output))
         self.logger.debug('Cleaning up temp dir: {0}'.format(tempdir))
-        torrentclient.remove_torrent(handle)
+        self.torrentclient.remove_torrent(handle)
         shutil.rmtree(tempdir)
         return output
