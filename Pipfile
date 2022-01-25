@@ -10,6 +10,8 @@ watchdog = "*"
 coloredlogs = "*"
 python-decouple = "*"
 requests = "*"
+flask = "*"
+python-dotenv = "*"
 
 [dev-packages]
 
