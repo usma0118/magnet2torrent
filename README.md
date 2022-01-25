@@ -9,11 +9,7 @@ A Python based tool that converts magnet links to .torrent files.
 
 ## TODO
 
-- TODO: Add https://github.com/ngosang/trackerslist/ trackers to torrents for getting better results and cache files for 24 hours.
-- TODO: Fix folder watcher
-- TODO: Abstract out Torrent handler for reusability
 - TODO: Add proxy support for client. (may be VPN)
-- TODO: Support for transmissionrpc direct addition (transmission has python package transmissionrpc)
 
 ## Licenses
 
