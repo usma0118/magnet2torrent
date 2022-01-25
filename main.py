@@ -78,11 +78,11 @@ class monitor:
 if __name__ == '__main__':
     logger = logging.getLogger(__name__)
     coloredlogs.install(level=config('log_level',default='debug'),logger=logger,fmt='[%(asctime)s] %(message)s')
-
-    #https://github.com/blind-oracle/transmission-trackers/blob/master/transmission-trackers.py
-    main=monitor(logger)
-    main.main()
+    logger.error('[Main thread]: Starting program version: {0}')
+    logger.info('[Main thread]: Setting log level: {0}'.format(config('log_level',default='debug')))
+    program=monitor(logger)
+    program.main()
 
 @atexit.register
 def _exithandler():
-    logger.error('[Main thread:] Program shutting down')
+    logger.error('[Main thread]: Program shutting down')
