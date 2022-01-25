@@ -12,6 +12,7 @@ python-decouple = "*"
 requests = "*"
 flask = "*"
 python-dotenv = "*"
+waitress = "*"
 
 [dev-packages]
 
