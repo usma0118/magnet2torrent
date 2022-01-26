@@ -81,7 +81,7 @@ class monitor:
         from web import app
         from waitress import serve
         self.logger.info('[Main thread]: Started waitress server on port: *:{0}'.format(8080))
-        handler=serve(app, host='127.0.0.1',port=8080)
+        handler=serve(app, host='127.0.0.1',port=8080,url_prefix=config('web_basepath',default='/'))
 
 if __name__ == '__main__':
 
@@ -91,7 +91,7 @@ if __name__ == '__main__':
     logger.info('[Main thread]: Setting log level: {0}'.format(config('log_level',default='debug')))
 
     program=monitor(logger)
-    thread=threading.Thread(target=program.run_web, daemon=True,url_prefix=config('web_basepath',default='/'))
+    thread=threading.Thread(target=program.run_web, daemon=True)
     thread.start()
     program.main()
 
