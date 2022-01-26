@@ -79,14 +79,14 @@ class monitor:
     def run_web(self):
         from web import app
         from waitress import serve
-        self.logger.info('Started waitress server on port: {0}'.format(8080))
+        self.logger.info('[Main thread]: Started waitress server on port: *:{0}'.format(8080))
         handler=serve(app, host='127.0.0.1',port=8080)
 
 if __name__ == '__main__':
 
     logger = logging.getLogger(__name__)
     coloredlogs.install(level=config('log_level',default='debug'),logger=logger,fmt='[%(asctime)s] %(message)s')
-    logger.error('[Main thread]: Starting program version: {0}')
+    logger.info('[Main thread]: Starting program version: {0}')
     logger.info('[Main thread]: Setting log level: {0}'.format(config('log_level',default='debug')))
 
     program=monitor(logger)
