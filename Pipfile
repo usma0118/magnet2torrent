@@ -13,6 +13,7 @@ requests = "*"
 flask = "*"
 python-dotenv = "*"
 waitress = "*"
+cachetools = "*"
 
 [dev-packages]
 
