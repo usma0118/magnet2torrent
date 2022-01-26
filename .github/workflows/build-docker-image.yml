@@ -31,6 +31,7 @@ jobs:
           type=semver,pattern={{major}}.{{minor}}
           type=semver,pattern={{major}}
           type=ref,event=tag
+          type=ref,event=branch
           type=sha
         flavor: |
           latest=auto
