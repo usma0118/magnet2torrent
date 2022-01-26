@@ -1,3 +1,4 @@
+from email.policy import default
 import os
 import atexit
 from pathlib import Path
@@ -90,7 +91,7 @@ if __name__ == '__main__':
     logger.info('[Main thread]: Setting log level: {0}'.format(config('log_level',default='debug')))
 
     program=monitor(logger)
-    thread=threading.Thread(target=program.run_web, daemon=True)
+    thread=threading.Thread(target=program.run_web, daemon=True,url_prefix=config('web_basepath',default='/'))
     thread.start()
     program.main()
 
