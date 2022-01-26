@@ -12,22 +12,23 @@ from decouple import config
 from filesystem.folderwatcher import folderwatcher
 from filesystem.FileSystemHandler import FileSystemHandler
 from torrent import torrentclient
+from cachetools import cached, TTLCache
 
 class monitor:
     def __init__(self,logger):
         self.logger=logger
-        self.load_trackers()
 
+    @cached(cache=TTLCache(maxsize=500,ttl=86400))
     def load_trackers(self):
         try:
             import requests
             #TODO: Cache trackers for 12 hours
             trackers_from = 'https://raw.githubusercontent.com/ngosang/trackerslist/master/trackers_all.txt'
-            self.trackers = requests.get(trackers_from).content.decode('utf8').split('\n\n')[:-1]
-            self.logger.info('Loaded trackers: {0}'.format(len(self.trackers)))
+            trackers = requests.get(trackers_from).content.decode('utf8').split('\n\n')[:-1]
+            self.logger.info('Loaded trackers: {0}'.format(len(trackers)))
+            return trackers
         except Exception as e:
             self.logger.error('Failed to get trackers from {0}: {1}'.format(trackers_from, str(e)))
-            self.trackers = []
 
     def main(self):
         parser = ArgumentParser(description='A tool to convert magnet links to .torrent files')
@@ -48,7 +49,7 @@ class monitor:
             self.logger.warning('No arguments passed, defaulting to monitor mode')
             args['monitor']='monitor'
 
-        client=torrentclient(self.logger,self.trackers)
+        client=torrentclient(self.logger,self.load_trackers())
         if args['monitor'] is not None:
             self.logger.info('Starting monitor mode')
             folder_watch=config('magnet_watch')
