@@ -18,6 +18,6 @@ def index():
 
     return render_template('index.html', files=files)
 
-@app.route('/<name>')
-def info(file):
-    return ''
+@app.route('/<path:path>')
+def info(path):
+    return 'Not implemented'

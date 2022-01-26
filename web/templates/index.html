@@ -17,11 +17,11 @@
             <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="#">upgrade your browser</a> to improve your experience.</p>
         <![endif]-->
 <header>
-<nav class="navbar navbar-dark bg-dark">
+<nav class="navbar navbar-dark bg-dark mb-4">
   <span class="navbar-brand mb-0 h1">Magnet2Torrent</span>
 </nav>
 </header>
-<div class="container">
+<main role="main" class="container">
 <div class="row">
 	<div class="col-12 col-lg-9">
 		<div class="card">
@@ -63,9 +63,9 @@
 							<tr>
 								<td>
 									<div class="d-flex align-items-center">
-										<div><i class="bx bxs-file-pdf me-2 font-24 text-success"></i>
+										<div><i class="bx bxs-file-pdf me-2 font-24 {{ 'text-success' if 'processed' in file.name else 'text-danger' }}"></i>
 										</div>
-										<div class="font-weight-bold text-success">{{ file.name }}</div>
+										<div class="font-weight-bold"><a class="{{ 'text-success' if 'processed' in file.name else 'text-danger' }}" href="{{file.name}}">{{ file.name }}</a></div>
 									</div>
 								</td>
 								<td>{{ file.created }}</td>
