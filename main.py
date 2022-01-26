@@ -4,6 +4,7 @@ from pathlib import Path
 from argparse import ArgumentParser
 import shutil
 import sys
+import threading
 from time import sleep
 import logging
 import coloredlogs
@@ -75,13 +76,22 @@ class monitor:
         elif args['magnet'] is not None:
             client.magnet2torrent(args['magnet'], output)
 
+    def run_web(self):
+        from web import app
+        from waitress import serve
+        self.logger.info('Started waitress server on port: {0}'.format(8080))
+        handler=serve(app, host='127.0.0.1',port=8080)
 
 if __name__ == '__main__':
+
     logger = logging.getLogger(__name__)
     coloredlogs.install(level=config('log_level',default='debug'),logger=logger,fmt='[%(asctime)s] %(message)s')
     logger.error('[Main thread]: Starting program version: {0}')
     logger.info('[Main thread]: Setting log level: {0}'.format(config('log_level',default='debug')))
+
     program=monitor(logger)
+    thread=threading.Thread(target=program.run_web, daemon=True)
+    thread.start()
     program.main()
 
 @atexit.register

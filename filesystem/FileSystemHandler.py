@@ -12,7 +12,7 @@ class FileSystemHandler(PatternMatchingEventHandler):
 
     def on_created(self, event):
         self.logger.debug(event)
-        self.on_action(self,event.src_path)
+        self.on_action(event.src_path)
 
     def on_moved(self,event):
         self.logger.debug(event)
