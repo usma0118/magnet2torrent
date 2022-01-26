@@ -42,14 +42,15 @@
 							<tr>
 								<td>
 									<div class="d-flex align-items-center">
-										<div><i class="bx bxs-file-pdf me-2 font-24 {{ 'text-success' if 'processed' in file.name else 'text-danger' }}"></i>
+										<div><i class="bx bxs-file-pdf me-2 font-24 fas fa-trash-alt"></i>
 										</div>
 										<div class="font-weight-bold"><a class="{{ 'text-success' if 'processed' in file.name else 'text-danger' }}" href="{{file.name}}">{{ file.name }}</a></div>
 									</div>
 								</td>
 								<td>{{ file.created }}</td>
 								<td>{{ file.modified }}</td>
-								<td><i class="fa fa-ellipsis-h font-24"></i>
+								<td>
+									<a href="#"><span class="glyphicon glyphicon-play-circle"></span></a>
 								</td>
 							</tr>
                             {% endfor %}
