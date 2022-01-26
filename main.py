@@ -81,8 +81,7 @@ class monitor:
         from web import app
         from waitress import serve
         self.logger.info('[Main thread]: Started waitress server on port: *:{0}{1}'.format(config('webserver_port',default='8080'),config('webserver_basepath',default='/')))
-        #serve(app, host='127.0.0.1',port=config('webserver_port',default='8080'),url_prefix=config('webserver_basepath',default=''))
-        app.run(host='0.0.0.0',port=config('webserver_port',default='8080'),debug=True,use_reloader=False)
+        serve(app, host='0.0.0.0',port=config('webserver_port',default='8080'),url_prefix=config('webserver_basepath',default=''))
 
 if __name__ == '__main__':
 
