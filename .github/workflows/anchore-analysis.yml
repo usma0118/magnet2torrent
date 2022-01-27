@@ -9,11 +9,20 @@
 # and parameters, see https://github.com/anchore/scan-action. For more
 # information on Anchore's container image scanning tool Grype, see
 # https://github.com/anchore/grype
-name: Anchore Container Scan
+name: Anchore security scanner
 
 on:
   push:
-    branches: [ '**' ]
+    branches:
+    - 'main'
+    - 'ui**'
+    - 'web/ui**'
+    - 'feature/**'
+    paths-ignore:
+      - '**/*.md'
+      - '**/*.yaml'
+      - '.github/**'
+      - '**/*.env'
   pull_request:
     # The branches below must be a subset of the branches above
     branches: [ main ]
