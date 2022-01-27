@@ -22,11 +22,12 @@ def create_app(SECRET_KEY=''):
 
     login_manager = LoginManager()
     login_manager.login_view = 'auth.login'
+    login_manager.login_message=''
     login_manager.init_app(app)
 
     @login_manager.user_loader
     def load_user(user_id):
-        return User(config('user'),1)
+        return User(config('user',default='admin'),1)
 
     # blueprint for auth routes in our app
     from .auth import auth as auth_blueprint
