@@ -24,7 +24,9 @@
 **/secrets.dev.yaml
 **/values.dev.yaml
 **/.github
-README.md
-pyproject.toml
-buid-docker.sh
-.pre-commit-config.yaml
+**/README.md
+**/pyproject.toml
+**/buid-docker.sh
+**/.pre-commit-config.yaml
+#Ignore run files
+**/run_*.py

@@ -4,9 +4,15 @@ from decouple import config
 import os
 import os.path,time
 from flask import render_template
-from web import app
+from flask import Blueprint
+from flask_login import login_required, current_user
 
-@app.route('/')
+
+
+main = Blueprint('main', __name__)
+
+@main.route('/')
+@login_required
 def index():
     folder_watch = os.path.join(config('magnet_watch',default='blackhole'))
 
@@ -18,6 +24,7 @@ def index():
 
     return render_template('index.html', files=files)
 
-@app.route('/<path:path>')
+@main.route('/<path:path>')
+@login_required
 def info(path):
     return 'Not implemented'

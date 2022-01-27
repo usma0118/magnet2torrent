@@ -1,4 +1,3 @@
-from email.policy import default
 import os
 import atexit
 from pathlib import Path
@@ -14,6 +13,8 @@ from filesystem.folderwatcher import folderwatcher
 from filesystem.FileSystemHandler import FileSystemHandler
 from torrent import torrentclient
 from cachetools import cached, TTLCache
+
+from web import create_app
 
 class monitor:
     def __init__(self,logger):
@@ -78,9 +79,12 @@ class monitor:
             client.magnet2torrent(args['magnet'], output)
 
     def run_web(self):
-        from web import app
+        import web
+        import uuid
+        app=create_app(config('webserver_secret',default=str(uuid.uuid4())))
         from waitress import serve
-        self.logger.info('[Main thread]: Started waitress server on port: *:{0}{1}'.format(config('webserver_port',default='8080'),config('webserver_basepath',default='/')))
+
+        self.logger.info('[Main thread]: Started waitress server on port: http://0.0.0.0:{0}{1}'.format(config('webserver_port',default='8080'),config('webserver_basepath',default='/')))
         serve(app, host='0.0.0.0',port=config('webserver_port',default='8080'),url_prefix=config('webserver_basepath',default=''))
 
 if __name__ == '__main__':
