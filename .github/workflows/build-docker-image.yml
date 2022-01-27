@@ -2,6 +2,11 @@ name: Build and publish docker release
 
 on:
   push:
+    paths-ignore:
+        - '**/*.md'
+        - '**/*.yaml'
+        - '.github/**'
+        - '**/*.env'
     branches:
       - 'main'
       - 'ui**'
