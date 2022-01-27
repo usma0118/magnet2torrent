@@ -19,9 +19,11 @@ def login_post():
     password = form.get('password')
     remember = True if form.get('remember') else False
 
-    user = User(username,1)
+    user=None
+    if username==config('username',default='admin'):
+        user = User(username,1)
 
-    if not user or not username==config('user') or not user.check_password(password):
+    if not user or not user.check_password(password):
         flash('Invalid credentials')
         # # is_safe_url should check if the url is safe for redirects.
         # # See http://flask.pocoo.org/snippets/62/ for an example.
