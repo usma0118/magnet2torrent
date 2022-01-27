@@ -25,15 +25,20 @@ def login_post():
 
     if not user or not user.check_password(password):
         flash('Invalid credentials')
-        # # is_safe_url should check if the url is safe for redirects.
-        # # See http://flask.pocoo.org/snippets/62/ for an example.
-        # if not is_safe_url(next):
-        #     return flask.abort(400)
         return render_template('login.html', title='Login', form=form)
     # login code goes here
     login_user(user, remember=remember)
     next_page = request.args.get('next')
-    return redirect(next_page) if next_page else redirect(url_for('main.index'))
+    if not next_page or not is_safe_url(next_page):
+        return redirect(url_for('main.index'))
+    return redirect(next_page)
+
+from urllib.parse import urlparse, urljoin
+def is_safe_url(target):
+    ref_url = urlparse(request.host_url)
+    test_url = urlparse(urljoin(request.host_url, target))
+    return test_url.scheme in ('http', 'https') and \
+        ref_url.netloc == test_url.netloc
 
 @auth.route('/logout')
 @login_required
