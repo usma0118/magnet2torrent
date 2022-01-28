@@ -2,7 +2,7 @@ version: '3.4'
 
 services:
   magnet2torrent:
-    image: antaresinc/magnet2torrent:1.0.1
+    image: antaresinc/magnet2torrent:latest
     build:
       context: .
       dockerfile: ./Dockerfile

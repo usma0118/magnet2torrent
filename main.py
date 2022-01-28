@@ -101,11 +101,14 @@ def main():
         if not os.access(folder_watch, os.W_OK):
             sys.exit("MagnetWatch directory must be writeable '{0}'".format(folder_watch))
         thread=threading.Thread(target=app.run_web, daemon=True)
-        thread.setName('Web')
+        thread.name='Web'
         thread.start()
         app.start()
-    except (SystemExit, KeyboardInterrupt):
-        logger.error('Something happened')
+    except SystemExit as sysex:
+        logger.error('Something happened: {0}'.format(sysex))
+    except KeyboardInterrupt as kex:
+        logger.error('Something happened: {0}'.format(kex))
+
 
 if __name__ == '__main__':
     main()
