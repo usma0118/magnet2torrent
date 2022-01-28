@@ -6,11 +6,11 @@ from watchdog.events import PatternMatchingEventHandler
 
 class folderwatcher:
 
-    def __init__(self, directory='.', handler=PatternMatchingEventHandler(),logger=logging.Logger):
+    def __init__(self, directory='.', handler=PatternMatchingEventHandler()):
         self.observer = Observer()
         self.handler = handler
         self.directory = directory
-        self.logger=logger
+        self.logger=logging.getLogger('FolderWatcher')
 
     def start(self):
         self.observer.schedule(
@@ -23,4 +23,4 @@ class folderwatcher:
         except:
             self.observer.stop()
         self.observer.join()
-        self.logger.error('Watcher Terminated')
+        self.logger.error('Watcher Shutting down')
