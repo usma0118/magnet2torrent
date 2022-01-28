@@ -49,13 +49,14 @@ def logout():
 
 
 from flask_login import UserMixin
-from hashlib import sha256
+from argon2 import PasswordHasher
 class User(UserMixin):
     def __init__(self, name, id, active=True):
         self.name = name
         self.id = id
         self.active = active
-        self.hash=sha256(config('password',default='').encode('utf-8')).hexdigest()
+        ph=PasswordHasher()
+        self.hash=ph.hash(config('password',default=''))
 
     def is_active(self):
         return self.active
@@ -66,6 +67,6 @@ class User(UserMixin):
     def is_authenticated(self):
         return True
 
-    def check_password(self, password):
-        hash=sha256(password.encode('utf-8')).hexdigest()
-        return True if hash == self.hash else False
+    def check_password(self, password:str):
+        ph=PasswordHasher()
+        return ph.verify(self.hash,password)

@@ -10,11 +10,12 @@ watchdog = "*"
 coloredlogs = "*"
 python-decouple = "*"
 requests = "*"
-flask = "*"
+Flask = "*"
 python-dotenv = "*"
 waitress = "*"
 cachetools = "*"
-flask-login = "*"
+Flask-Login = "*"
+argon2-cffi = "*"
 
 [dev-packages]
 
