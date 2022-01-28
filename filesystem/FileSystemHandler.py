@@ -3,11 +3,11 @@ from pathlib import Path
 import shutil
 from watchdog.events import PatternMatchingEventHandler
 from decouple import config
-
+import logging
 class FileSystemHandler(PatternMatchingEventHandler):
-    def __init__(self,tclient,logger):
+    def __init__(self,tclient):
         PatternMatchingEventHandler.__init__(self,patterns=['*.magnet'],ignore_directories=True)
-        self.logger=logger
+        self.logger=logging.getLogger('Worker')
         self.client=tclient
 
     def on_created(self, event):

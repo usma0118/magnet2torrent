@@ -2,6 +2,7 @@ from email.policy import default
 from flask import render_template, Blueprint,redirect, url_for,request,flash
 from flask_login import login_user,logout_user,current_user,login_required
 from decouple import config
+import logging
 
 auth = Blueprint('auth', __name__)
 

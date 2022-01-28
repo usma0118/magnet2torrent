@@ -17,14 +17,13 @@ from cachetools import cached, TTLCache
 from web import create_app
 
 class monitor:
-    def __init__(self,logger):
-        self.logger=logger
+    def __init__(self):
+        self.logger=logging.getLogger('Monitor worker')
 
     @cached(cache=TTLCache(maxsize=500,ttl=86400))
     def load_trackers(self):
         try:
             import requests
-            #TODO: Cache trackers for 12 hours
             trackers_from = 'https://raw.githubusercontent.com/ngosang/trackerslist/master/trackers_all.txt'
             trackers = requests.get(trackers_from).content.decode('utf8').split('\n\n')[:-1]
             self.logger.info('Loaded trackers: {0}'.format(len(trackers)))
@@ -32,7 +31,7 @@ class monitor:
         except Exception as e:
             self.logger.error('Failed to get trackers from {0}: {1}'.format(trackers_from, str(e)))
 
-    def main(self):
+    def start(self):
         parser = ArgumentParser(description='A tool to convert magnet links to .torrent files')
         monitorparser=parser.add_argument_group('Watch folder for magnet files and conver to torrent')
         monitorparser.add_argument('--monitor',default=True,action='store_true')
@@ -73,32 +72,44 @@ class monitor:
                     magnet_processed+='.err'
                 shutil.move(magnet,magnet_processed)
 
-            folder_watcher=folderwatcher(folder_watch,FileSystemHandler(client,self.logger),self.logger)
+            folder_watcher=folderwatcher(folder_watch,FileSystemHandler(client))
             folder_watcher.start()
         elif args['magnet'] is not None:
             client.magnet2torrent(args['magnet'], output)
 
     def run_web(self):
-        import web
         import uuid
-        app=create_app(config('webserver_secret',default=str(uuid.uuid4())))
+        webapp=create_app(config('webserver_secret',default=str(uuid.uuid4())))
         from waitress import serve
+        serve(webapp, host='0.0.0.0',port=config('webserver_port',default='8080'),url_prefix=config('webserver_basepath',default=''))
 
-        self.logger.info('[Main thread]: Started waitress server on port: http://0.0.0.0:{0}{1}'.format(config('webserver_port',default='8080'),config('webserver_basepath',default='/')))
-        serve(app, host='0.0.0.0',port=config('webserver_port',default='8080'),url_prefix=config('webserver_basepath',default=''))
+
+def main():
+    # set thread name
+    threading.currentThread().setName('MAIN')
+    logger = logging.getLogger('MAIN')
+    global app
+    app=monitor()
+    try:
+        coloredlogs.install(level=config('log_level',default='debug'),fmt='[%(asctime)s] %(threadName)s %(name)s[%(process)d]: %(message)s')
+        logger.info('Starting program version: {0}')
+        logger.info('Setting log level: {0}'.format(config('log_level',default='debug')))
+
+        folder_watch=config('magnet_watch')
+
+        # Make sure we can write to the blockhole dir
+        if not os.access(folder_watch, os.W_OK):
+            sys.exit("MagnetWatch directory must be writeable '{0}'".format(folder_watch))
+        thread=threading.Thread(target=app.run_web, daemon=True)
+        thread.setName('Web')
+        thread.start()
+        app.start()
+    except (SystemExit, KeyboardInterrupt):
+        logger.error('Something happened')
 
 if __name__ == '__main__':
-
-    logger = logging.getLogger(__name__)
-    coloredlogs.install(level=config('log_level',default='debug'),logger=logger,fmt='[%(asctime)s] %(message)s')
-    logger.info('[Main thread]: Starting program version: {0}')
-    logger.info('[Main thread]: Setting log level: {0}'.format(config('log_level',default='debug')))
-
-    program=monitor(logger)
-    thread=threading.Thread(target=program.run_web, daemon=True)
-    thread.start()
-    program.main()
+    main()
 
 @atexit.register
 def _exithandler():
-    logger.error('[Main thread]: Program shutting down')
+    logging.getLogger('MAIN').error('Program shutting down')
