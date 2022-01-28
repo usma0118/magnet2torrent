@@ -1,11 +1,9 @@
-from email.policy import default
 from flask import Flask
 from web import routes
 from flask_login import LoginManager
 from web.auth import User
 from decouple import config
 import logging
-import coloredlogs
 
 def create_app(SECRET_KEY=''):
     app = Flask(__name__)
@@ -19,7 +17,7 @@ def create_app(SECRET_KEY=''):
 
     password=config('password',default='')
     if password=='':
-        app.logger.warning('Password not defined')
+        app.logger.error('Password not defined')
     else:
         app.logger.info('Password configured from config')
 
