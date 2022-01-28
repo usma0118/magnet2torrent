@@ -98,8 +98,8 @@ def main():
         folder_watch=config('magnet_watch')
 
         # Make sure we can write to the blockhole dir
-        if not os.access(folder_watch, os.W_OK):
-            sys.exit("MagnetWatch directory must be writeable '{0}'".format(folder_watch))
+        # if not os.access(folder_watch, os.W_OK):
+        #     sys.exit("MagnetWatch directory must be writeable '{0}'".format(folder_watch))
         thread=threading.Thread(target=app.run_web, daemon=True)
         thread.name='Web'
         thread.start()
@@ -107,7 +107,7 @@ def main():
     except SystemExit as sysex:
         logger.error('Something happened: {0}'.format(sysex))
     except KeyboardInterrupt as kex:
-        logger.error('Something happened: {0}'.format(kex))
+        logger.error('Keyboard interrupt: {0}'.format(kex))
 
 
 if __name__ == '__main__':
