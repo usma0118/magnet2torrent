@@ -5,12 +5,12 @@ from web.auth import User
 from decouple import config
 import logging
 
-def create_app(SECRET_KEY=''):
+def create_app(SECRET_KEY):
     app = Flask(__name__)
-    app.config['SECRET_KEY']=SECRET_KEY
+    app.SECRET_KEY=SECRET_KEY
     logging.basicConfig(level=logging.DEBUG)
 
-    app.logger.debug('Ensure detail settings exist')
+    app.logger.debug('Validating settings')
     user=config('user',default='')
     if user=='':
         app.logger.warning('User settings is empty defaulting to admin')

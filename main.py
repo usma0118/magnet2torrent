@@ -91,7 +91,7 @@ def main():
     global app
     app=monitor()
     try:
-        coloredlogs.install(level=config('log_level',default='debug'),fmt='[%(asctime)s] %(threadName)s %(name)s[%(process)d]: %(message)s')
+        coloredlogs.install(level=config('log_level',default='debug'),fmt='[%(asctime)s] %(name)s[%(process)d]: %(message)s')
         logger.info('Starting program version: {0}')
         logger.info('Setting log level: {0}'.format(config('log_level',default='debug')))
 
