@@ -86,7 +86,7 @@ class monitor:
 
 def main():
     # set thread name
-    threading.current_thread().setName('MAIN')
+    threading.current_thread().name='MAIN'
     logger = logging.getLogger('MAIN')
     global app
     app=monitor()
