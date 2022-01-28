@@ -50,6 +50,7 @@ def logout():
 
 from flask_login import UserMixin
 from argon2 import PasswordHasher
+from argon2.exceptions import VerificationError
 class User(UserMixin):
     def __init__(self, name, id, active=True):
         self.name = name
@@ -68,5 +69,8 @@ class User(UserMixin):
         return True
 
     def check_password(self, password:str):
-        ph=PasswordHasher()
-        return ph.verify(self.hash,password)
+        try:
+            ph=PasswordHasher()
+            return ph.verify(self.hash,password)
+        except VerificationError:
+            return False
