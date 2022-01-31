@@ -13,10 +13,8 @@ WORKDIR /app
 COPY Pipfile* ./
 
 ENV DEBIAN_FRONTEND noninteractive
-RUN apk update && \
-    apk add gcc
-    #&& \
-#   rm -rf /var/lib/apk/lists/*
+RUN apk add python3-dev gcc --no-cache && \
+   rm -rf /var/lib/apk/*
 
 RUN pipenv install --deploy --ignore-pipfile
 
