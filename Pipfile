@@ -16,6 +16,7 @@ waitress = "*"
 cachetools = "*"
 Flask-Login = "*"
 argon2-cffi = "*"
+cffi = "*"
 
 [dev-packages]
 

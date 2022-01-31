@@ -4,17 +4,13 @@ FROM python:3.10-alpine3.15 AS python-alpine3
 ENV PYTHONDONTWRITEBYTECODE=1
 ## Turns off buffering for easier container logging
 ENV PYTHONUNBUFFERED=1
+ENV DEBIAN_FRONTEND noninteractive
 
 FROM python-alpine3 AS python-deps
-
 RUN pip install pipenv --no-cache-dir
 
 WORKDIR /app
 COPY Pipfile* ./
-
-ENV DEBIAN_FRONTEND noninteractive
-RUN apk add python3-dev gcc --no-cache && \
-   rm -rf /var/lib/apk/*
 
 RUN pipenv install --deploy --ignore-pipfile
 
