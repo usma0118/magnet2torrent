@@ -14,8 +14,8 @@ COPY Pipfile* ./
 
 ENV DEBIAN_FRONTEND noninteractive
 RUN apk update && \
-    apk -y install gcc
-    ##&& \
+    apk add gcc
+    #&& \
 #   rm -rf /var/lib/apk/lists/*
 
 RUN pipenv install --deploy --ignore-pipfile
