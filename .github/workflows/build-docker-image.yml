@@ -1,4 +1,4 @@
-name: Build and publish docker release
+name: Docker container
 
 on:
   push:
@@ -29,14 +29,6 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - name: Initialize CodeQL
-      uses: github/codeql-action/init@v1
-      with:
-        languages: ${{ matrix.language }}
-
-    - name: Perform CodeQL Analysis
-      uses: github/codeql-action/analyze@v1
-
     - name: Docker meta
       id: meta
       uses: docker/metadata-action@v3
@@ -44,7 +36,6 @@ jobs:
         # list of Docker images to use as base name for tags
         images: |
           antaresinc/magnet2torrent
-#          ghcr.io/antaresinc/magnet2torrent
         # generate Docker tags based on the following events/attributes
         tags: |
           type=semver,pattern={{version}}
@@ -52,7 +43,7 @@ jobs:
           type=semver,pattern={{major}}
           type=ref,event=tag
           type=ref,event=branch
-          type=sha
+        #  type=sha
         flavor: |
           latest=auto
 
