@@ -1,8 +1,6 @@
-from email.policy import default
 from flask import render_template, Blueprint,redirect, url_for,request,flash
 from flask_login import login_user,logout_user,current_user,login_required
 from decouple import config
-import logging
 
 auth = Blueprint('auth', __name__)
 
@@ -49,15 +47,13 @@ def logout():
 
 
 from flask_login import UserMixin
-from argon2 import PasswordHasher
-from argon2.exceptions import VerificationError
+from hashlib import sha256
 class User(UserMixin):
     def __init__(self, name, id, active=True):
         self.name = name
         self.id = id
         self.active = active
-        ph=PasswordHasher()
-        self.hash=ph.hash(config('password',default=''))
+        self.hash=sha256(config('password',default='').encode('utf-8')).hexdigest()
 
     def is_active(self):
         return self.active
@@ -69,8 +65,5 @@ class User(UserMixin):
         return True
 
     def check_password(self, password:str):
-        try:
-            ph=PasswordHasher()
-            return ph.verify(self.hash,password)
-        except VerificationError:
-            return False
+        hash=sha256(password.encode('utf-8')).hexdigest()
+        return True if hash == self.hash else False

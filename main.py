@@ -5,7 +5,6 @@ from argparse import ArgumentParser
 import shutil
 import sys
 import threading
-from time import sleep
 import logging
 import coloredlogs
 from decouple import config
@@ -95,7 +94,7 @@ def main():
         logger.info('Starting program version: {0}')
         logger.info('Setting log level: {0}'.format(config('log_level',default='debug')))
 
-        folder_watch=config('magnet_watch')
+        #folder_watch=config('magnet_watch')
 
         # Make sure we can write to the blockhole dir
         # if not os.access(folder_watch, os.W_OK):

@@ -1,10 +1,11 @@
 from importlib.metadata import files
 from pathlib import Path
+from urllib import request
 from decouple import config
 import os
 import os.path,time
 from flask import render_template
-from flask import Blueprint
+from flask import Blueprint,redirect, url_for,request,flash
 from flask_login import login_required, current_user
 
 
@@ -28,3 +29,13 @@ def index():
 @login_required
 def info(path):
     return 'Not implemented'
+
+@main.route('/delete', methods=['POST'])
+@login_required
+def remove_record():
+    filename=request.form.get('file')
+    filename=os.path.join(config('magnet_watch',default='blackhole'),filename)
+    if os.path.exists(filename):
+        os.remove(filename)
+    flash('File {0} deleted successfully'.format(request.form.get('file')),category='info')
+    return redirect(url_for('main.index'))
