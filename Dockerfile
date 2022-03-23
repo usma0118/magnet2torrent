@@ -15,8 +15,8 @@ COPY Pipfile* ./
 RUN pipenv install --deploy --ignore-pipfile
 
 FROM python-alpine3 as runtime
-VOLUME [ "/torrent" ]
 ENV magnet_watch=/torrent
+VOLUME [ $magnet_watch ]
 ENV log_level="info"
 ENV FLASK_ENV=production
 # Creates a non-root user with an explicit UID and adds permission to access the /app folder
