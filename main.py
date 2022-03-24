@@ -40,7 +40,7 @@ class monitor:
     def load_trackers(self):
         try:
             import requests
-            trackers_from = 'https://raw.githubusercontent.com/ngosang/trackerslist/master/trackers_all.txt'
+            trackers_from = config('trackers_from','https://raw.githubusercontent.com/ngosang/trackerslist/master/trackers_all.txt')
             trackers = requests.get(trackers_from).content.decode('utf8').split('\n\n')[:-1]
             self.logger.info('Loaded trackers: {0}'.format(len(trackers)))
             return trackers
