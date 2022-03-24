@@ -39,7 +39,7 @@ Recommended way is to run it as [docker container](https://hub.docker.com/reposi
 - `webserver_port` (`8080`)
 - `webserver_secret` (defaults to randmon generated))
 
-### **Proxy**
+#### **Proxy**
 
 Application supports http proxy for fetching torrent info
 
