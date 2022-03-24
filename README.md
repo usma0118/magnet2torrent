@@ -33,24 +33,26 @@ Environment variables are fetched via [dotenv](https://www.npmjs.com/package/dot
 
 #### **Blackhole**
 
-- `magnet_watch` (docker exposes `/torrent` as volume) Directory path to monitor for new magnet links
+- `magnet_watch` (defaults to `/torrent` as volume) Directory path to monitor for new magnet links
 - `torrent_blackhole` (optional, defaults to same value as `magnet_watch`) must be set to same blackhole directory as your torrent client.
 
 #### **Web server**
-- `webserver_basepath` (`/`)
-- `webserver_port` (`8080`)
-- `webserver_secret` (defaults to randmon generated))
+- `webserver_basepath` (defaults to `/`)
+- `webserver_port` (defaults to `8080`)
+- `webserver_secret` (defaults to randmon generated value))
 
 #### **Proxy**
 
 Application supports http proxy for fetching torrent info
 
-- `proxy_hostname` (`optional`)
+- `proxy_hostname` (`required` if proxy port is set)
 - `proxy_port` (`required` if proxy hostname is set)
 - `proxy_username` (`optional`)
 - `proxy_password` (`optional`)
 
-#### Docker Compose
+#### Docker
+
+Docker image runs as uid 1001
 
 
 ## Licenses
