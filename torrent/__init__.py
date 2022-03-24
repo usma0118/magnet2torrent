@@ -1,1 +1,2 @@
-from .torrentclient import torrentclient
+from .internalclient import internalclient
+from .transmissionclient import transmission_client

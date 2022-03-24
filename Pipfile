@@ -15,6 +15,7 @@ python-dotenv = "*"
 waitress = "*"
 cachetools = "*"
 Flask-Login = "*"
+transmission-rpc = "*"
 
 [dev-packages]
 
