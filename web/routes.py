@@ -34,8 +34,8 @@ def info(path):
 @login_required
 def remove_record():
     filename=request.form.get('file')
-    filename=os.path.join(config('magnet_watch',default='blackhole'),filename)
-    if os.path.exists(filename):
-        os.remove(filename)
-    flash('File {0} deleted successfully'.format(request.form.get('file')),category='info')
+    filepath=os.path.normpath(os.path.join(config('magnet_watch',default='blackhole'),filename))
+    if os.path.exists(filepath):
+        os.remove(filepath)
+    flash('File {0} deleted successfully'.format(filename),category='info')
     return redirect(url_for('main.index'))
