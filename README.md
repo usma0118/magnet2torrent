@@ -27,12 +27,12 @@ Recommended way is to run it as [docker container](https://hub.docker.com/reposi
 ### Environment Variables
 
 - `log_level` (`info`) : can be set to info,warning, error
-- `trackers` (default is using [ngosang tracker list](https://raw.githubusercontent.com/ngosang/trackerslist/master/trackers_all.txt)) 
+- `trackers` (default is using [ngosang/trackerslist](https://github.com/ngosang/trackerslist)) 
 
 #### **Blackhole**
 
-- `magnet_watch` (`/torrent`)
-- `torrent_blackhole`
+- `magnet_watch` (docker exposes `/torrent` as volume) Directory path to monitor for new magnet links
+- `torrent_blackhole` (optional, defaults to same value as `magnet_watch`) must be set to same blackhole directory as your torrent client.
 
 #### **Web server**
 - `webserver_basepath` (`/`)
@@ -40,7 +40,6 @@ Recommended way is to run it as [docker container](https://hub.docker.com/reposi
 - `webserver_secret` (defaults to randmon generated))
 
 #### Docker Compose
-
 
 
 ## Licenses
