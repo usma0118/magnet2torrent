@@ -52,7 +52,7 @@ Application supports http proxy for fetching torrent info
 
 #### Docker
 
-Docker image runs as uid 1001
+[Docker image](https://hub.docker.com/repository/docker/antaresinc/magnet2torrent) runs as uid 1001
 
 
 ## Licenses
