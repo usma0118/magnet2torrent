@@ -18,6 +18,23 @@ from web import create_app
 class monitor:
     def __init__(self):
         self.logger=logging.getLogger('Monitor worker')
+        uid = os.getuid()
+        self.logger.debug("Running as uid: {0}".format(uid))
+        folder_watch=config('magnet_watch')
+        # Make sure we have read permissions to 
+        if not os.access(folder_watch, os.R_OK):
+            self.logger.error("Watch directory: '{0}' doesn't exit or not readable by user {1}".format(folder_watch,uid))
+            sys.exit("Unable to read: '{0}' ".format(folder_watch))
+        else:
+            self.logger.debug("Watch directory: '{0}' is readable".format(folder_watch))
+
+        torrent_blackhole=config('torrent_blackhole',default=folder_watch)
+        # Make sure we have read permissions to 
+        if not os.access(torrent_blackhole, os.W_OK):
+            self.logger.error("Blackhole: '{0}' doesn't exit or not writeable by user: {1}".format(torrent_blackhole,uid))
+            sys.exit("Unable to read/write to: '{0}' ".format(torrent_blackhole))
+        else:
+            self.logger.debug("Blackhole directory: '{0}' is writeable ".format(torrent_blackhole))        
 
     @cached(cache=TTLCache(maxsize=500,ttl=86400))
     def load_trackers(self):
@@ -88,26 +105,20 @@ def main():
     threading.current_thread().name='MAIN'
     logger = logging.getLogger('MAIN')
     global app
-    app=monitor()
     try:
         coloredlogs.install(level=config('log_level',default='debug'),fmt='[%(asctime)s] %(name)s[%(process)d]: %(message)s')
         logger.info('Starting program version: {0}')
         logger.info('Setting log level: {0}'.format(config('log_level',default='debug')))
-
-        #folder_watch=config('magnet_watch')
-
-        # Make sure we can write to the blockhole dir
-        # if not os.access(folder_watch, os.W_OK):
-        #     sys.exit("MagnetWatch directory must be writeable '{0}'".format(folder_watch))
+        
+        app=monitor()
         thread=threading.Thread(target=app.run_web, daemon=True)
         thread.name='Web'
         thread.start()
         app.start()
     except SystemExit as sysex:
-        logger.error('Something happened: {0}'.format(sysex))
+        logger.error('Critical error: {0}'.format(sysex))
     except KeyboardInterrupt as kex:
         logger.error('Keyboard interrupt: {0}'.format(kex))
-
 
 if __name__ == '__main__':
     main()
