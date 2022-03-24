@@ -26,6 +26,8 @@ Recommended way is to run it as [docker container](https://hub.docker.com/reposi
 
 ### Environment Variables
 
+Environment variables are fetched via [dotenv](https://www.npmjs.com/package/dotenv), this gives you option to configure your variables either as env variables or in .env file (located in installation directory)
+
 - `log_level` (`info`) : can be set to info,warning, error
 - `trackers` (default is using [ngosang/trackerslist](https://github.com/ngosang/trackerslist)) 
 
