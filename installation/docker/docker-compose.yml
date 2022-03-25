@@ -5,6 +5,6 @@ services:
     image: antaresinc/magnet2torrent:latest
     build:
       context: .
-      dockerfile: ./Dockerfile
+      dockerfile: ../../Dockerfile
     env_file:
       - docker.env
