@@ -40,6 +40,8 @@ Environment variables are fetched via [dotenv](https://www.npmjs.com/package/dot
 - `webserver_basepath` (defaults to `/`)
 - `webserver_port` (defaults to `8080`)
 - `webserver_secret` (defaults to randmon generated value))
+- `web_username` (defaults to `admin`)
+- `web_userpassword` (`required`)
 
 #### **Proxy**
 

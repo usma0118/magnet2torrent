@@ -15,7 +15,7 @@ def create_app(SECRET_KEY):
     if user=='':
         app.logger.warning('User settings is empty defaulting to admin')
 
-    password=config('password',default='')
+    password=config('web_userpassword',default='')
     if password=='':
         app.logger.error('Password not defined')
     else:
@@ -28,7 +28,7 @@ def create_app(SECRET_KEY):
 
     @login_manager.user_loader
     def load_user(user_id):
-        return User(config('user',default='admin'),1)
+        return User(config('web_username',default='admin'),1)
 
     # blueprint for auth routes in our app
     from .auth import auth as auth_blueprint
