@@ -42,7 +42,7 @@ class monitor:
             import requests
             trackers_from = config('trackers','https://raw.githubusercontent.com/ngosang/trackerslist/master/trackers_all.txt')
             trackers = requests.get(trackers_from).content.decode('utf8').split('\n\n')[:-1]
-            self.logger.info('Loaded trackers: {0}'.format(len(trackers)))
+            self.logger.info('{0} trackers loaded.'.format(len(trackers)))
             return trackers
         except Exception as e:
             self.logger.error('Failed to get trackers from {0}: {1}'.format(trackers_from, str(e)))
@@ -66,7 +66,7 @@ class monitor:
             self.logger.warning('No arguments passed, defaulting to monitor mode')
             args['monitor']='monitor'
 
-        client=torrentclient(self.logger,self.load_trackers())
+        client=internalclient(self.logger,self.load_trackers())
         if args['monitor'] is not None:
             self.logger.info('Starting monitor mode')
             folder_watch=config('magnet_watch')

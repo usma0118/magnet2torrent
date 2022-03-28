@@ -1,0 +1,60 @@
+{% extends "baseTemplate.html" %}
+
+{% block content %}
+<style>
+  .magnet-icon {
+  width: 20px;
+  display: block;
+}
+
+.seeds {
+  color: #99c24d;
+}
+
+.leechers {
+  color: #c62328;
+}
+</style>
+<div class="field">
+    <form action="/">
+      <label class="label">Search:</label>
+      <div class="control">
+        <!-- <input type="hidden" id="website_source" name="website_source" value="<%= website_source %>" />
+        <input value="<%= term %>" id="term" name="term" class="input is-medium" type="text" placeholder="Medium input"> -->
+      </div>
+    </form>
+  </div>
+  
+  <table class="table is-striped is-fullwidth is-hoverable">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Size</th>
+        <th>Seeders</th>
+        <th>Leechers</th>
+        <th>Magnet</th>
+        <th>Source</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for torrent in torrents %}
+        <tr>
+          <td>
+            <a href="{{ torrent.id }}">{{ torrent.name }}</a>
+          </td>
+          <td>{{ torrent.size }}</td>
+          <td class="seeds">{{ torrent.peers }}</td>
+          <td class="leechers">00</td>          
+          <!-- <td class="seeds">{{ torrent.peers }}</td>
+          <td class="leechers"><%= torrent.leechers %></td> -->
+          <td>
+            <a href="{{ torrent.magnet_url }}">
+              <img class="magnet-icon" src="{{ url_for('static',filename='images/magnet-icon.png')}}" />
+            </a>
+          </td>
+          <td>torrent.website_source</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}
