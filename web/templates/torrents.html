@@ -19,8 +19,8 @@
     <form action="/">
       <label class="label">Search:</label>
       <div class="control">
-        <!-- <input type="hidden" id="website_source" name="website_source" value="<%= website_source %>" />
-        <input value="<%= term %>" id="term" name="term" class="input is-medium" type="text" placeholder="Medium input"> -->
+        <input type="hidden" id="website_source" name="website_source" value="<%= website_source %>" />
+        <input value="" id="term" name="term" class="input is-medium" type="text" placeholder="Name search">
       </div>
     </form>
   </div>
@@ -45,8 +45,6 @@
           <td>{{ torrent.size }}</td>
           <td class="seeds">{{ torrent.peers }}</td>
           <td class="leechers">00</td>          
-          <!-- <td class="seeds">{{ torrent.peers }}</td>
-          <td class="leechers"><%= torrent.leechers %></td> -->
           <td>
             <a href="{{ torrent.magnet_url }}">
               <img class="magnet-icon" src="{{ url_for('static',filename='images/magnet-icon.png')}}" />

@@ -54,7 +54,14 @@ Application supports http proxy for fetching torrent info
 
 #### **Supported clients**
 
-- Transmission
+- **Transmission**
+
+    - `client_host` (`required` empty value will disbale this functionality)
+    - `client_port` (`optional` defaults to 9091)
+    - `client_path` (`optional` defaults to `/transmission`)
+    - `client_username` (`optional`)
+    - `client_password` (`optional`)
+
 
 #### Docker
 
