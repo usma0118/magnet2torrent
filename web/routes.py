@@ -33,7 +33,7 @@ def torrents():
     client=transmission_client(config("client_host"),config("client_username"),config("client_password"),port=config("client_port"))
     torrents=client.get_torrents()
     for torrent in torrents:
-        torrent_view.append({'id':torrent.id,'name':torrent.name,'status':torrent.status,'progress':torrent.progress,"peers": torrent.peers, 'stalled':torrent.is_stalled,'size':torrent.totalSize,'hash':torrent.hashString,"magnet_url":torrent.magnetLink,"isPrivate":torrent.isPrivate})
+        torrent_view.append({'id':torrent.id,'name':torrent.name,'status':torrent.status,'progress': round(float(torrent.progress)),"peers": torrent.peers, 'stalled':torrent.is_stalled,'size':torrent.totalSize,'hash':torrent.hashString,"magnet_url":torrent.magnetLink,"isPrivate":torrent.isPrivate})
 
     return render_template('torrents.html', torrents=torrent_view)
 

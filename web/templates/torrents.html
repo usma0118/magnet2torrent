@@ -14,6 +14,10 @@
 .leechers {
   color: #c62328;
 }
+.badge {
+  background-color: #c62328;
+  margin-left: 10px;
+}
 </style>
 <div class="field">
     <form action="/">
@@ -31,26 +35,24 @@
         <th>Name</th>
         <th>Size</th>
         <th>Seeders</th>
-        <th>Leechers</th>
+        <th>Progress</th>
         <th>Magnet</th>
-        <th>Source</th>
       </tr>
     </thead>
     <tbody>
       {% for torrent in torrents %}
         <tr>
           <td>
-            <a href="{{ torrent.id }}">{{ torrent.name }}</a>
+            <a href="{{ torrent.id }}">{{ torrent.name }}  {%- if torrent.stalled -%}<span class="badge">Stalled</span>{%-endif-%}</a>
           </td>
           <td>{{ torrent.size }}</td>
           <td class="seeds">{{ torrent.peers }}</td>
-          <td class="leechers">00</td>          
+          <td {{ 'class=leechers' if torrent.stalled else 'class=seeds' }}>{{ torrent.progress }}%</td>
           <td>
             <a href="{{ torrent.magnet_url }}">
               <img class="magnet-icon" src="{{ url_for('static',filename='images/magnet-icon.png')}}" />
             </a>
           </td>
-          <td>torrent.website_source</td>
         </tr>
         {% endfor %}
     </tbody>

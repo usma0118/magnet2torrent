@@ -11,8 +11,6 @@ app.run('127.0.0.1',port=8080,debug=True,load_dotenv=True)
 #     tr=transmission_client()
 #     t=tr.list()
 #     for tort in t:
-#         print(tort.name)
-#         print(tort.hashString)
 #         trackers=tort._fields.get("trackers")
 #         for t1 in trackers[0]:
 #             print(t1.get("announce"))
