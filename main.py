@@ -10,7 +10,7 @@ import coloredlogs
 from decouple import config
 from filesystem.folderwatcher import folderwatcher
 from filesystem.FileSystemHandler import FileSystemHandler
-from torrent import internalclient
+from torrents import internalclient
 from cachetools import cached, TTLCache
 
 from web import create_app

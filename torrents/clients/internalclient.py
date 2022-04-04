@@ -6,7 +6,7 @@ import libtorrent as lt
 from decouple import config
 import shutil
 
-class internalclient:
+class InternalClient:
     settings = {
         'enable_dht': False,
         'use_dht_as_fallback': False,

@@ -8,8 +8,8 @@ import os.path,time
 from flask import render_template
 from flask import Blueprint,redirect, url_for,request,flash
 from flask_login import login_required, current_user
-from torrent import transmission_client
-
+from torrents.clients.transmissionclient import TransmissionClient
+from torrents.models import torrent as models
 
 main = Blueprint('main', __name__)
 
@@ -30,10 +30,11 @@ def index():
 @login_required
 def torrents():
     torrent_view=[]
-    client=transmission_client(config("client_host"),config("client_username"),config("client_password"),port=config("client_port"))
+    client=TransmissionClient(config("client_host"),config("client_username"),config("client_password"),port=config("client_port"))
     torrents=client.get_torrents()
-    for torrent in torrents:
-        torrent_view.append({'id':torrent.id,'name':torrent.name,'status':torrent.status,'progress': round(float(torrent.progress)),"peers": torrent.peers, 'stalled':torrent.is_stalled,'size':torrent.totalSize,'hash':torrent.hashString,"magnet_url":torrent.magnetLink,"isPrivate":torrent.isPrivate})
+    for trt in torrents:
+        torrentmodel=models.Torrent(id=trt.id,name=trt.name,status=trt.status,progress=trt.progress,peers=trt.peers,is_stalled=trt.is_stalled,totalSize=trt.totalSize,magnet_link=trt.magnetLink,is_private=trt.isPrivate)
+        torrent_view.append({'id':trt.id,'name':trt.name,'status':trt.status,'progress': round(float(trt.progress)),"peers": trt.peers, 'stalled':trt.is_stalled,'size':trt.totalSize,'hash':trt.hashString,"magnet_url":trt.magnetLink,"isPrivate":trt.isPrivate})
 
     return render_template('torrents.html', torrents=torrent_view)
 
