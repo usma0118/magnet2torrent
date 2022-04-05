@@ -65,7 +65,7 @@ jobs:
         tags: ${{ steps.meta.outputs.tags }}
         labels: ${{ steps.meta.outputs.labels }}
     - name: Run the Anchore scan action itself with GitHub Advanced Security code scanning integration enabled
-      uses: anchore/scan-action@0001ba0daf81f40441d7f7f0413af69ed10f44b6
+      uses: anchore/scan-action@637a1294a90c793e45a95dfd2b12a4eee59cf2d7
       with:
         path: "."
         acs-report-enable: true
