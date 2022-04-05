@@ -11,6 +11,15 @@
   color: #99c24d;
 }
 
+.seeding {
+  color: #99c24d;
+}
+.downloading {
+  color: #4d59c2;
+}
+.pending {
+  color: #6d6d70;
+}
 .leechers {
   color: #c62328;
 }
@@ -35,8 +44,8 @@
         <th></th>
         <th>Name</th>
         <th>Size</th>
-        <th>Seeders</th>
-        <th>Progress</th>        
+        <th>Status</th>
+        <th>Progress</th>
       </tr>
     </thead>
     <tbody>
@@ -48,11 +57,11 @@
             </a>
           </td>          
           <td>
-            <a href="{{ torrent.id }}">{{ torrent.name }} {%- if torrent.stalled and torrent.progress < 100 -%}<span class="badge">Stalled</span>{%-endif-%}{%- if torrent.isPrivate -%}<span class="badge">Private</span>{%-endif-%}</a>
+            <a href="{{ torrent.id }}" class='{{ torrent.status }}'>{{ torrent.name }} {%- if torrent.stalled and torrent.progress < 100 -%}<span class="badge">Stalled</span>{%-endif-%}{%- if torrent.isPrivate -%}<span class="badge">Private</span>{%-endif-%}</a>
           </td>
           <td>{{ torrent.size }}</td>
-          <td class="seeds"> torrent.peers </td>
           <td {{ 'class=leechers' if torrent.stalled and torrent.progress < 100 else 'class=seeds' }}>{{ torrent.progress }}%</td>
+          <td>{{ torrent.status }}</td>
         </tr>
         {% endfor %}
     </tbody>

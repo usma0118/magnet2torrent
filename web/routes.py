@@ -36,7 +36,7 @@ def torrents():
         # torrentmodel=models.Torrent(id=trt.id,name=trt.name,status=trt.status,progress=trt.progress,peers=trt.peers,is_stalled=trt.is_stalled,totalSize=trt.totalSize,magnet_link=trt.magnetLink,is_private=trt.isPrivate)
         torrent_view.append({'id':trt.id,'name':trt.name,'status':trt.status,'progress': round(float(trt.progress)),"peers": trt.peers, 'stalled':trt.is_stalled,'size':trt.totalSize,'hash':trt.hashString,"magnet_url":trt.magnetLink,"isPrivate":trt.isPrivate})
 
-    return render_template('torrents.html', torrents=sorted(torrent_view))
+    return render_template('torrents.html', torrents=torrent_view)
 
 @main.route('/<path:path>')
 @login_required

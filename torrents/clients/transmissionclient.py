@@ -19,6 +19,10 @@ class TransmissionClient:
         Gets a torrent by id
         '''
         return self._client.get_torrent(torrent_id)
+    
+    def add_torrent(self,magnet:str):
+       return self._client.add_torrent(magnet)
+    
 
     def update_trackers(self,torrent_id:int,trackers:array):
         '''
