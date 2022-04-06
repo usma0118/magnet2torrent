@@ -23,21 +23,21 @@ class Worker:
             pass
             # self.observer.stop()
         self.logger.error('Tracker sync shutting down')
-    
+
     def synch(self):
        torrents= self.client.get_torrents()
        global_trackers=self.load_trackers()
        for torrent in torrents:
            self.logger.debug('Processing torrent {0} with hash {1}'.format(torrent.id,torrent.hashString))
            self.logger.info('Checking torrent {0}'.format(torrent.name))
-           if torrent.status != 'stopped' and not torrent.is_finished and not torrent.isPrivate :
-               torrent_trackers=torrent._fields.get("trackers")
+           if torrent.status != 'stopped' and torrent.status != 'seeding' and not torrent.is_finished and not torrent.isPrivate :
+               torrent_trackers=torrent._fields.get('trackers')
                t=[]
                for tracker_array in torrent_trackers:
                    if not type(tracker_array) is list:
                        continue
                    for tracker in tracker_array:
-                    t.append(tracker['announce'])                    
+                    t.append(tracker['announce'])
                uniquelist=set(global_trackers).intersection(t)
                self.client.update_trackers(torrent.id,numpy.array(list(uniquelist)))
 
@@ -51,3 +51,8 @@ class Worker:
             return trackers
         except Exception as e:
             self.logger.error('Failed to get trackers from {0}: {1}'.format(trackers_from, str(e)))
+
+if __name__ == '__main__':
+    client=TransmissionClient('transmission.antaresinc.home','secrets','alpha123',80)
+    worker=Worker(client)
+    worker.synch()
