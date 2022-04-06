@@ -16,6 +16,7 @@ waitress = "*"
 cachetools = "*"
 Flask-Login = "*"
 transmission-rpc = "*"
+numpy = "*"
 
 [dev-packages]
 
