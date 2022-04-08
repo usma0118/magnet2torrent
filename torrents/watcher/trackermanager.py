@@ -1,11 +1,12 @@
+from nis import cat
 from cachetools import cached, TTLCache
 import logging
 import time
 from torrents.clients.transmissionclient import TransmissionClient
 import numpy
 
-class Worker:
-    def __init__(self,client:TransmissionClient,interval=30):
+class TrackerManager:
+    def __init__(self, client:TransmissionClient, interval=30):
         '''
         interval: seconds between checks
         '''
@@ -28,7 +29,7 @@ class Worker:
        torrents= self.client.get_torrents()
        global_trackers=self.load_trackers()
        for torrent in torrents:
-           self.logger.debug('Processing torrent {0} with hash {1}'.format(torrent.id,torrent.hashString))
+           self.logger.debug('Processing torrent {0} with hash {1}'.format(torrent.id, torrent.hashString))
            self.logger.info('Checking torrent {0}'.format(torrent.name))
            if torrent.status != 'stopped' and torrent.status != 'seeding' and not torrent.is_finished and not torrent.isPrivate :
                torrent_trackers=torrent._fields.get('trackers')
@@ -39,7 +40,13 @@ class Worker:
                    for tracker in tracker_array:
                     t.append(tracker['announce'])
                uniquelist=set(global_trackers).intersection(t)
-               self.client.update_trackers(torrent.id,numpy.array(list(uniquelist)))
+               try:
+                   self.client.update_trackers(torrent.id,numpy.array(list(uniquelist)))
+               except Exception as e:
+                self.logger.error('Failed to update trackers for torrent {0}'.format(torrent.name))
+           else:
+                self.logger.debug('Torrent {0} is not active or is private'.format(torrent.name))
+                
 
     @cached(cache=TTLCache(maxsize=1500,ttl=86400))
     def load_trackers(self):
@@ -54,5 +61,5 @@ class Worker:
 
 if __name__ == '__main__':
     client=TransmissionClient('transmission.antaresinc.home','secrets','alpha123',80)
-    worker=Worker(client)
+    worker=TrackerManager(client)
     worker.synch()
