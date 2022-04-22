@@ -26,27 +26,32 @@ class TrackerManager:
         self.logger.error('Tracker sync shutting down')
 
     def synch(self):
-       torrents= self.client.get_torrents()
-       global_trackers=self.load_trackers()
-       for torrent in torrents:
-           self.logger.debug('Processing torrent {0} with hash {1}'.format(torrent.id, torrent.hashString))
-           self.logger.info('Checking torrent {0}'.format(torrent.name))
-           if torrent.status != 'stopped' and torrent.status != 'seeding' and not torrent.is_finished and not torrent.isPrivate :
-               torrent_trackers=torrent._fields.get('trackers')
-               t=[]
-               for tracker_array in torrent_trackers:
-                   if not type(tracker_array) is list:
-                       continue
-                   for tracker in tracker_array:
-                    t.append(tracker['announce'])
-               uniquelist=set(global_trackers).intersection(t)
-               try:
-                   self.client.update_trackers(torrent.id,numpy.array(list(uniquelist)))
-               except Exception as e:
-                self.logger.error('Failed to update trackers for torrent {0}'.format(torrent.name))
-           else:
-                self.logger.debug('Torrent {0} is not active or is private'.format(torrent.name))
-                
+        torrents= self.client.get_torrents()
+        global_trackers=self.load_trackers()
+        for torrent in torrents:
+            self.logger.debug('torrent {0} with hash {1}'.format(torrent.id, torrent.hashString))
+            self.logger.info('Processing Torrent: {0}'.format(torrent.name))
+            if torrent.status != 'stopped' and torrent.status != 'seeding' and not torrent.is_finished and not torrent.isPrivate :
+                torrent_trackers=torrent._fields.get('trackers')
+                t=[]
+                for tracker_array in torrent_trackers:
+                    if not type(tracker_array) is list:
+                        continue
+                    for tracker in tracker_array:
+                        t.append(tracker['announce'])
+                uniquelist=set(global_trackers).intersection(t)
+                if len(uniquelist) == 0:
+                    self.logger.info('No new trackers to update')
+                    continue
+                try:
+                    self.client.update_trackers(torrent.id,numpy.array(list(uniquelist)))
+                    self.client.reannounce_torrent(torrent.id)
+                    self.logger.info('{0} Trackers updated'.format(len(uniquelist)))
+                except Exception as e:
+                    self.logger.error('Failed to update trackers with error: {0}'.format(e))
+            else:
+                self.logger.warning('Skipping torrent is {0}'.format(torrent.status))
+
 
     @cached(cache=TTLCache(maxsize=1500,ttl=86400))
     def load_trackers(self):
@@ -58,8 +63,3 @@ class TrackerManager:
             return trackers
         except Exception as e:
             self.logger.error('Failed to get trackers from {0}: {1}'.format(trackers_from, str(e)))
-
-if __name__ == '__main__':
-    client=TransmissionClient('transmission.antaresinc.home','secrets','alpha123',80)
-    worker=TrackerManager(client)
-    worker.synch()

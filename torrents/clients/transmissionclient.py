@@ -21,14 +21,14 @@ class TransmissionClient:
         return self._client.get_torrent(torrent_id)
 
     def add_torrent(self,magnet:str):
-       return self._client.add_torrent(magnet)
+        return self._client.add_torrent(magnet)
 
 
     def update_trackers(self,torrent_id:int,trackers):
         '''
         Update the trackers for a torrent
         '''
-        tracker_chunks = [trackers[i:i + 4] for i in range(0, len(trackers), 10)]
+        tracker_chunks = [trackers[i:i + 4] for i in range(0, len(trackers), 9)]
         for tracker_chunk in tracker_chunks:
             self._client.change_torrent(torrent_id, trackerAdd= tracker_chunk)
 
