@@ -21,8 +21,12 @@ class TrackerManager:
             while True:
                 self.sync()
                 time.sleep(self.interval)
-        except:
-            pass
+        except Exception as e:
+            logger.error('Critical error: {0}'.format(e))
+        except SystemExit as sysex:
+            logger.error('Critical error: {0}'.format(sysex))
+        except KeyboardInterrupt as kex:
+            logger.error('Keyboard interrupt: {0}'.format(kex))
         self.logger.error('Tracker sync shutting down')
 
     def sync(self):
