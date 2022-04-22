@@ -6,7 +6,7 @@ import os.path,time
 from flask import render_template
 from flask import Blueprint,redirect, url_for,request,flash
 from flask_login import login_required, current_user
-from torrents.clients.transmissionclient import TransmissionClient
+from torrents.clients import TransmissionClient
 from torrents.models import torrent as models
 
 main = Blueprint('main', __name__)
@@ -17,7 +17,7 @@ def index():
     folder_watch = os.path.join(config('magnet_watch',default='blackhole'))
 
     # Show directory contents
-    types = ["*.magnet*", "*.torrent*"]
+    types = ['*.magnet*', '*.torrent*']
     magnets = []
     for type in types:
         files=Path(folder_watch).glob(type)
@@ -32,7 +32,7 @@ def index():
 @login_required
 def torrents():
     torrent_view=[]
-    client=TransmissionClient(config('client_host'),config('client_username'),config('client_password'),port=config('client_port'))
+    client=TransmissionClient(config('transmission_host'),config('transmission_user'),config('transmission_password'),port=config('transmission_port'),path=config('transmission_path',default='/transmission/rpc'))
     torrents=client.get_torrents()
     for trt in torrents:
         torrent_view.append({'id':trt.id,'name':trt.name,'status':trt.status,'progress': round(float(trt.progress)),'peers': trt.peers, 'stalled':trt.is_stalled,'size':trt.totalSize,'hash':trt.hashString,'magnet_url':trt.magnetLink,'isPrivate':trt.isPrivate})

@@ -2,7 +2,7 @@ from nis import cat
 from cachetools import cached, TTLCache
 import logging
 import time
-from torrents.clients.transmissionclient import TransmissionClient
+from torrents.clients import TransmissionClient
 import numpy
 
 class TrackerManager:
@@ -15,17 +15,17 @@ class TrackerManager:
         self.logger=logging.getLogger('Tracker sync')
         pass
 
-    def run(self):
+    def start(self):
         self.logger.info('Tracker sync started')
         try:
             while True:
+                self.sync()
                 time.sleep(self.interval)
         except:
             pass
-            # self.observer.stop()
         self.logger.error('Tracker sync shutting down')
 
-    def synch(self):
+    def sync(self):
         torrents= self.client.get_torrents()
         global_trackers=self.load_trackers()
         for torrent in torrents:

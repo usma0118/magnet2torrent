@@ -29,7 +29,7 @@ Recommended way is to run it as [docker container](https://hub.docker.com/reposi
 Environment variables are fetched via [dotenv](https://www.npmjs.com/package/dotenv), this gives you option to configure your variables either as env variables or in .env file (located in installation directory)
 
 - `log_level` (optional, defaults to `info`) : can be set to info,warning, error
-- `trackers` (optional, default is using [ngosang/trackerslist](https://github.com/ngosang/trackerslist)) 
+- `trackers` (optional, default is using [ngosang/trackerslist](https://github.com/ngosang/trackerslist))
 
 #### **Blackhole**
 
@@ -56,11 +56,11 @@ Application supports http proxy for fetching torrent info
 
 - **Transmission**
 
-    - `client_host` (`required` empty value will disbale this functionality)
-    - `client_port` (`optional` defaults to 9091)
-    - `client_path` (`optional` defaults to `/transmission`)
-    - `client_username` (`optional`)
-    - `client_password` (`optional`)
+    - `transmission_host` (`required` empty value will disbale this functionality)
+    - `transmission_port` (`optional` defaults to 9091)
+    - `transmission_path` (`optional` defaults to `/transmission`)
+    - `transmission_user` (`optional`)
+    - `transmission_password` (`optional`)
 
 
 #### Docker
