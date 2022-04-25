@@ -1,4 +1,4 @@
-FROM python:3.11.0a2-alpine3.15 AS python-alpine3
+FROM python:3.10-alpine3.15 AS python-alpine3
 # Setup env
 ## Keeps Python from generating .pyc files in the container
 ENV PYTHONDONTWRITEBYTECODE=1
@@ -9,6 +9,9 @@ ENV DEBIAN_FRONTEND noninteractive
 FROM python-alpine3 AS python-deps
 RUN python3 -m pip install --upgrade pip setuptools wheel --no-cache-dir
 RUN python3 -m pip install pipenv --no-cache-dir
+
+RUN apt-get install -y gcc
+
 # BUG: https://github.com/pypa/pipenv/issues/4564
 RUN python3 -m pip install numpy==1.22.3 --no-cache-dir
 
