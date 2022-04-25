@@ -7,7 +7,9 @@ ENV PYTHONUNBUFFERED=1
 ENV DEBIAN_FRONTEND noninteractive
 
 FROM python-alpine3 AS python-deps
-RUN pip install pipenv --no-cache-dir
+RUN python3 -m pip install --upgrade pip setuptools wheel --no-cache-dir
+RUN python3 -m pip install --no-cache-dir
+#RUN pip install pipenv --no-cache-dir
 
 WORKDIR /app
 COPY Pipfile* ./
