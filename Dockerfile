@@ -10,7 +10,7 @@ FROM python-alpine3 AS python-deps
 RUN python3 -m pip install --upgrade pip setuptools wheel --no-cache-dir
 RUN python3 -m pip install pipenv --no-cache-dir
 
-RUN apt-get install -y gcc
+RUN apk install -y gcc
 
 # BUG: https://github.com/pypa/pipenv/issues/4564
 RUN python3 -m pip install numpy==1.22.3 --no-cache-dir
