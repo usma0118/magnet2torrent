@@ -1,4 +1,4 @@
-FROM python:3.10-alpine3.15 AS python-alpine3
+FROM python:3.11.0a2-alpine3.15 AS python-alpine3
 # Setup env
 ## Keeps Python from generating .pyc files in the container
 ENV PYTHONDONTWRITEBYTECODE=1
