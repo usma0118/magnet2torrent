@@ -1,0 +1,82 @@
+{% extends "baseTemplate.html" %}
+{% set active_page = "downloads" %}
+{% block content %}
+<style>
+  .magnet-icon {
+  width: 20px;
+  display: block;
+  }
+
+.seeds {
+  color: #99c24d;
+}
+
+.seeding {
+  color: #99c24d;
+}
+.downloading {
+  color: #4d59c2;
+}
+.pending {
+  color: #6d6d70;
+}
+.leechers {
+  color: #c62328;
+}
+.stopped {
+  color: #6d6d70;
+}
+.badge {
+  background-color: #c62328;
+  margin-left: 10px;
+}
+</style>
+<div class="field">
+    <form action="/">
+      <label class="label">Search:</label>
+      <div class="control">
+        <input type="hidden" id="website_source" name="website_source" value="<%= website_source %>" />
+        <input value="" id="term" name="term" class="input is-medium" type="text" placeholder="Name search">
+      </div>
+    </form>
+  </div>
+  <table class="table is-striped is-fullwidth is-hoverable">
+    <thead>
+      <tr>
+        <th></th>
+        <th>Name</th>
+        <th>Size</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for torrent in torrents %}
+        <tr>
+          <td>
+            <a href="{{ torrent.magnet_url }}">
+              <img class="magnet-icon" src="{{ url_for('static',filename='images/magnet-icon.png')}}" />
+            </a>
+          </td>
+          <td>
+            <a href="torrent/{{ torrent.id }}" class='{{ torrent.status }}'>{{ torrent.name }}{%- if torrent.isPrivate -%}<span class="badge">Private</span>{%-endif-%}</a>
+            <div class="progress">
+              {% if torrent.status=="seeding" %}
+                  {% set progress_bar_class="bg-success active" %}
+              {% elif torrent.status=="stopped" %}
+                  {% set progress_bar_class="bg-warning" %}
+              {% elif torrent.stalled %}
+                {% set progress_bar_class="bg-danger" %}
+              {% else %}
+                {% set progress_bar_class="bg-info" %}
+              {% endif %}
+              <div class="progress-bar progress-bar-striped {{ progress_bar_class }}" role="progressbar"
+              aria-valuenow="{{ torrent.progress }}" aria-valuemin="0" aria-valuemax="100" style='width:{{ torrent.progress if torrent.progress>0 else 100 }}%'>
+              {{ torrent.progress }}%{%- if torrent.stalled and not torrent.status=='seeding' -%} (Stalled){%-endif-%}
+              </div>
+            </div>
+          </td>
+          <td>{{ torrent.size }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}

@@ -1,0 +1,18 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: transmission
+  name: magnet2torrent-lb
+  namespace: downloaders
+spec:
+  ports:
+    - name: http
+      port: 80
+      protocol: TCP
+      targetPort: web
+  selector:
+    app: magnet2torrent
+    role: backend
+  type: ClusterIP

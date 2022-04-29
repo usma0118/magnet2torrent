@@ -28,8 +28,8 @@ Recommended way is to run it as [docker container](https://hub.docker.com/reposi
 
 Environment variables are fetched via [dotenv](https://www.npmjs.com/package/dotenv), this gives you option to configure your variables either as env variables or in .env file (located in installation directory)
 
-- `log_level` (`info`) : can be set to info,warning, error
-- `trackers` (default is using [ngosang/trackerslist](https://github.com/ngosang/trackerslist)) 
+- `log_level` (optional, defaults to `info`) : can be set to info,warning, error
+- `trackers` (optional, default is using [ngosang/trackerslist](https://github.com/ngosang/trackerslist))
 
 #### **Blackhole**
 
@@ -40,6 +40,8 @@ Environment variables are fetched via [dotenv](https://www.npmjs.com/package/dot
 - `webserver_basepath` (defaults to `/`)
 - `webserver_port` (defaults to `8080`)
 - `webserver_secret` (defaults to randmon generated value))
+- `web_username` (defaults to `admin`)
+- `web_userpassword` (`required`)
 
 #### **Proxy**
 
@@ -50,9 +52,20 @@ Application supports http proxy for fetching torrent info
 - `proxy_username` (`optional`)
 - `proxy_password` (`optional`)
 
+#### **Supported clients**
+
+- **Transmission**
+
+    - `transmission_host` (`required` empty value will disbale this functionality)
+    - `transmission_port` (`optional` defaults to 9091)
+    - `transmission_path` (`optional` defaults to `/transmission`)
+    - `transmission_user` (`optional`)
+    - `transmission_password` (`optional`)
+
+
 #### Docker
 
-Docker image runs as uid 1001
+[Docker image](https://hub.docker.com/repository/docker/antaresinc/magnet2torrent) runs as uid 1001
 
 
 ## Licenses

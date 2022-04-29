@@ -10,8 +10,9 @@ import coloredlogs
 from decouple import config
 from filesystem.folderwatcher import folderwatcher
 from filesystem.FileSystemHandler import FileSystemHandler
-from torrent import torrentclient
 from cachetools import cached, TTLCache
+from torrents.trackers import TrackerManager
+from torrents.clients import InternalClient, TransmissionClient
 
 from web import create_app
 
@@ -19,9 +20,9 @@ class monitor:
     def __init__(self):
         self.logger=logging.getLogger('Monitor worker')
         uid = os.getuid()
-        self.logger.debug("Running as uid: {0}".format(uid))
+        self.logger.debug('Running as uid: {0}'.format(uid))
         folder_watch=config('magnet_watch')
-        # Make sure we have read permissions to 
+        # Make sure we have read permissions to
         if not os.access(folder_watch, os.R_OK):
             self.logger.error("Watch directory: '{0}' doesn't exit or not readable by user {1}".format(folder_watch,uid))
             sys.exit("Unable to read: '{0}' ".format(folder_watch))
@@ -29,12 +30,12 @@ class monitor:
             self.logger.debug("Watch directory: '{0}' is readable".format(folder_watch))
 
         torrent_blackhole=config('torrent_blackhole',default=folder_watch)
-        # Make sure we have read permissions to 
+        # Make sure we have read permissions to
         if not os.access(torrent_blackhole, os.W_OK):
             self.logger.error("Blackhole: '{0}' doesn't exit or not writeable by user: {1}".format(torrent_blackhole,uid))
             sys.exit("Unable to read/write to: '{0}' ".format(torrent_blackhole))
         else:
-            self.logger.debug("Blackhole directory: '{0}' is writeable ".format(torrent_blackhole))        
+            self.logger.debug("Blackhole directory: '{0}' is writeable ".format(torrent_blackhole))
 
     @cached(cache=TTLCache(maxsize=500,ttl=86400))
     def load_trackers(self):
@@ -42,7 +43,7 @@ class monitor:
             import requests
             trackers_from = config('trackers','https://raw.githubusercontent.com/ngosang/trackerslist/master/trackers_all.txt')
             trackers = requests.get(trackers_from).content.decode('utf8').split('\n\n')[:-1]
-            self.logger.info('Loaded trackers: {0}'.format(len(trackers)))
+            self.logger.info('{0} trackers loaded.'.format(len(trackers)))
             return trackers
         except Exception as e:
             self.logger.error('Failed to get trackers from {0}: {1}'.format(trackers_from, str(e)))
@@ -66,7 +67,7 @@ class monitor:
             self.logger.warning('No arguments passed, defaulting to monitor mode')
             args['monitor']='monitor'
 
-        client=torrentclient(self.logger,self.load_trackers())
+        client=InternalClient(self.logger,self.load_trackers())
         if args['monitor'] is not None:
             self.logger.info('Starting monitor mode')
             folder_watch=config('magnet_watch')
@@ -109,12 +110,17 @@ def main():
         coloredlogs.install(level=config('log_level',default='debug'),fmt='[%(asctime)s] %(name)s[%(process)d]: %(message)s')
         logger.info('Starting program version: {0}')
         logger.info('Setting log level: {0}'.format(config('log_level',default='debug')))
-        
         app=monitor()
+        client=TransmissionClient(config('transmission_host',default='localhost'),config('transmission_user',default=''),config('transmission_password',default=''),config('transmission_port',default=9091))
+        tmanager=TrackerManager(client=client,interval=config('tracker_interval',default=3600))
+        trackerthread=threading.Thread(target=tmanager.start, daemon=True)
+        trackerthread.name='Tracker Manager'
+        trackerthread.start()
         thread=threading.Thread(target=app.run_web, daemon=True)
         thread.name='Web'
         thread.start()
         app.start()
+
     except SystemExit as sysex:
         logger.error('Critical error: {0}'.format(sysex))
     except KeyboardInterrupt as kex:
