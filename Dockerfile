@@ -1,4 +1,4 @@
-FROM python:3.10 AS python-baseline
+FROM python:3.10-alpine3.15 AS python-alpine3
 # Setup env
 ## Keeps Python from generating .pyc files in the container
 ENV PYTHONDONTWRITEBYTECODE=1
@@ -6,7 +6,7 @@ ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 ENV DEBIAN_FRONTEND noninteractive
 
-FROM python-baseline AS python-deps
+FROM python-alpine3 AS python-deps
 RUN python3 -m pip install --upgrade pip setuptools wheel --no-cache-dir
 RUN python3 -m pip install pipenv --no-cache-dir
 
@@ -22,8 +22,9 @@ COPY Pipfile* ./
 
 RUN pipenv install --deploy --ignore-pipfile
 
-FROM python:3.10-alpine3.15 AS runtime
-#FROM python-alpine3 as runtime
+FROM python-alpine3 as runtime
+RUN apk add lapack
+
 ENV magnet_watch=/torrent
 VOLUME [ $magnet_watch ]
 ENV log_level="info"
