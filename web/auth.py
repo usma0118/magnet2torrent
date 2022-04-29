@@ -19,7 +19,7 @@ def login_post():
     remember = True if form.get('remember') else False
 
     user=None
-    if username==config('username',default='admin'):
+    if username==config('web_username',default='admin'):
         user = User(username,1)
 
     if not user or not user.check_password(password):
@@ -53,7 +53,7 @@ class User(UserMixin):
         self.name = name
         self.id = id
         self.active = active
-        self.hash=sha256(config('password',default='').encode('utf-8')).hexdigest()
+        self.hash=sha256(config('web_userpassword',default='').encode('utf-8')).hexdigest()
 
     def is_active(self):
         return self.active

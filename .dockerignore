@@ -28,5 +28,6 @@
 **/pyproject.toml
 **/buid-docker.sh
 **/.pre-commit-config.yaml
-#Ignore run files
+
+/* Ignore run files */
 **/run_*.py

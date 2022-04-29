@@ -1,0 +1,62 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: magnet2torrent
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: magnet2torrent
+      role: backend
+  template:
+    metadata:
+      labels:
+        app: magnet2torrent
+        role: backend
+    spec:
+      volumes:
+        - name: volume_claim
+      containers:
+        - name: magnet2torrent
+          image: antaresinc/magnet2torrent:{tag}
+          pullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+              name: web
+              protocol: TCP
+          volumeMounts:
+            - mountPath: "/torrent"
+              name: volume_claim
+          resources:
+            requests:
+              cpu: "10m"
+              memory: "35M"
+            limits:
+              cpu: "50m"
+              memory: "50M"
+          env:
+            - name: "TZ"
+              value: "${TIMEZONE}"
+            - name: "log_level"
+              value: "info"
+            - name: "webserver_basepath"
+              value: "/magnet2torrent"
+            - name: "web_userpassword"
+              value: "password"
+            - name: "web_username"
+              value: "user"
+          securityContext:
+            allowPrivilegeEscalation: false
+          readinessProbe:
+            tcpSocket:
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            tcpSocket:
+              port: 8080
+            initialDelaySeconds: 15
+            periodSeconds: 20
