@@ -1,4 +1,4 @@
-FROM python:3.10-alpine3.15 AS python-alpine3
+FROM python:3.10 AS python-baseline
 # Setup env
 ## Keeps Python from generating .pyc files in the container
 ENV PYTHONDONTWRITEBYTECODE=1
@@ -6,7 +6,7 @@ ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 ENV DEBIAN_FRONTEND noninteractive
 
-FROM python-alpine3 AS python-deps
+FROM python-baseline AS python-deps
 RUN python3 -m pip install --upgrade pip setuptools wheel --no-cache-dir
 RUN python3 -m pip install pipenv --no-cache-dir
 
@@ -16,15 +16,14 @@ RUN apk add gcc
 # gist: https://gist.github.com/orenitamar/f29fb15db3b0d13178c1c4dd611adce2
 RUN ln -s /usr/include/locale.h /usr/include/xlocale.h
 RUN apk --no-cache --update-cache add gcc gfortran build-base wget freetype-dev libpng-dev openblas-dev
-#RUN pip install --no-cache-dir numpy
-#scipy pandas matplotlib
 
 WORKDIR /app
 COPY Pipfile* ./
 
 RUN pipenv install --deploy --ignore-pipfile
 
-FROM python-alpine3 as runtime
+FROM python:3.10-alpine3.15 AS runtime
+#FROM python-alpine3 as runtime
 ENV magnet_watch=/torrent
 VOLUME [ $magnet_watch ]
 ENV log_level="info"
