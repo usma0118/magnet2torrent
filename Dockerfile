@@ -13,7 +13,11 @@ RUN python3 -m pip install pipenv --no-cache-dir
 RUN apk add gcc
 
 # BUG: https://github.com/pypa/pipenv/issues/4564
-RUN python3 -m pip install numpy==1.22.3 --no-cache-dir
+RUN echo "http://dl-8.alpinelinux.org/alpine/edge/community" >> /etc/apk/repositories
+RUN ln -s /usr/include/locale.h /usr/include/xlocale.h
+RUN apk --no-cache --update-cache add gcc gfortran python python-dev py-pip build-base wget freetype-dev libpng-dev openblas-dev
+RUN pip install --no-cache-dir numpy
+#scipy pandas matplotlib
 
 WORKDIR /app
 COPY Pipfile* ./
