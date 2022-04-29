@@ -23,8 +23,7 @@ COPY Pipfile* ./
 RUN pipenv install --deploy --ignore-pipfile
 
 FROM python-alpine3 as runtime
-RUN apk add lapack
-
+RUN apk --no-cache add --virtual .builddeps gcc gfortran musl-dev  && apk del .builddeps && rm -rf /root/.cache
 ENV magnet_watch=/torrent
 VOLUME [ $magnet_watch ]
 ENV log_level="info"
