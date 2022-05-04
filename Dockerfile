@@ -10,11 +10,10 @@ FROM python-alpine3 AS python-deps
 RUN python3 -m pip install --upgrade pip setuptools wheel --no-cache-dir
 RUN python3 -m pip install pipenv --no-cache-dir
 
-RUN apk --no-cache add --virtual .builddeps gcc gfortran musl-dev  && apk del .builddeps && rm -rf /root/.cache
 # BUG: https://github.com/pypa/pipenv/issues/4564
 # gist: https://gist.github.com/orenitamar/f29fb15db3b0d13178c1c4dd611adce2
+RUN apk --no-cache add --virtual .builddeps gcc gfortran musl-dev build-base wget freetype-dev libpng-dev openblas-dev  && apk del .builddeps && rm -rf /root/.cache
 RUN ln -s /usr/include/locale.h /usr/include/xlocale.h
-#RUN apk --no-cache --update-cache add gcc gfortran build-base wget freetype-dev libpng-dev openblas-dev
 
 WORKDIR /app
 COPY Pipfile* ./
