@@ -6,13 +6,17 @@ auth = Blueprint('auth', __name__)
 
 @auth.route('/login')
 def login():
+
     return render_template('login.html')
 
 @auth.route('/login', methods=['POST'])
 def login_post():
     if current_user.is_authenticated:
         return redirect(url_for('main.index'))
-   # login code goes here
+
+    # return make_response('Could not verify', 403,
+    #                              {'WWW-Authenticate': 'Basic realm ="Wrong Password !!"'})
+    # login code goes here
     form=request.form
     username = form.get('username')
     password = form.get('password')
