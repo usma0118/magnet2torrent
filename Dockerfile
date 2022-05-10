@@ -18,12 +18,10 @@ RUN python3 -m pip install --upgrade pip setuptools wheel --no-cache-dir \
 
 COPY Pipfile .
 COPY Pipfile.lock .
+
 RUN pipenv install --deploy --ignore-pipfile
-
 WORKDIR /app
-
 FROM python-alpine3 as runtime
-RUN apk add --upgrade openblas
 
 ENV magnet_watch=/torrent
 VOLUME [ $magnet_watch ]
@@ -32,7 +30,7 @@ ENV FLASK_ENV=production
 # Creates a non-root user with an explicit UID and adds permission to access the /app folder
 RUN adduser -u 1001  magnet2torrent --disabled-password --no-create-home --gecos ""
 
-COPY --from=python-deps /root/.local/share/virtualenvs/app-*/lib/python3.8/site-packages /usr/local/lib/python3.8/site-packages
+COPY --from=python-deps /root/.local/share/virtualenvs/*/lib/python3.8/site-packages /usr/local/lib/python3.8/site-packages
 
 COPY --chown=magnet2torrent:magnet2torrent . /app
 
