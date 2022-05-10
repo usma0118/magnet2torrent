@@ -1,5 +1,7 @@
-FROM python:3.10-alpine3.15 AS python-alpine3
+FROM python:3.8-alpine3.15 AS python-alpine3
 # Setup env
+ENV LANG C.UTF-8
+ENV LC_ALL C.UTF-8
 ## Keeps Python from generating .pyc files in the container
 ENV PYTHONDONTWRITEBYTECODE=1
 ## Turns off buffering for easier container logging
@@ -7,29 +9,30 @@ ENV PYTHONUNBUFFERED=1
 ENV DEBIAN_FRONTEND noninteractive
 
 FROM python-alpine3 AS python-deps
-RUN python3 -m pip install --upgrade pip setuptools wheel --no-cache-dir
-RUN python3 -m pip install pipenv --no-cache-dir
 
-# BUG: https://github.com/pypa/pipenv/issues/4564
-# gist: https://gist.github.com/orenitamar/f29fb15db3b0d13178c1c4dd611adce2
-RUN apk --no-cache add --virtual .builddeps gcc gfortran musl-dev build-base wget freetype-dev libpng-dev openblas-dev  && apk del .builddeps && rm -rf /root/.cache
-RUN ln -s /usr/include/locale.h /usr/include/xlocale.h
+RUN echo "https://dl-cdn.alpinelinux.org/alpine/v$(cut -d'.' -f1,2 /etc/alpine-release)/community/" >> /etc/apk/repositories \
+    && apk update
 
-WORKDIR /app
-COPY Pipfile* ./
+RUN python3 -m pip install --upgrade pip setuptools wheel --no-cache-dir \
+    && python3 -m pip install pipenv --no-cache-dir
 
+COPY Pipfile .
+COPY Pipfile.lock .
 RUN pipenv install --deploy --ignore-pipfile
 
+WORKDIR /app
+
 FROM python-alpine3 as runtime
-#RUN apk --no-cache add --virtual .builddeps gcc gfortran musl-dev  && apk del .builddeps && rm -rf /root/.cache
+RUN apk add --upgrade openblas
+
 ENV magnet_watch=/torrent
 VOLUME [ $magnet_watch ]
 ENV log_level="info"
 ENV FLASK_ENV=production
 # Creates a non-root user with an explicit UID and adds permission to access the /app folder
 RUN adduser -u 1001  magnet2torrent --disabled-password --no-create-home --gecos ""
-COPY --from=python-deps /usr/lib/python3.8/site-packages /usr/local/lib/python3.10/site-packages
-COPY --from=python-deps /root/.local/share/virtualenvs/app-*/lib/python3.10/site-packages /usr/local/lib/python3.10/site-packages
+
+COPY --from=python-deps /root/.local/share/virtualenvs/app-*/lib/python3.8/site-packages /usr/local/lib/python3.8/site-packages
 
 COPY --chown=magnet2torrent:magnet2torrent . /app
 
@@ -40,4 +43,5 @@ EXPOSE 8080
 USER magnet2torrent
 
 # During debugging, this entry point will be overridden. For more information, please refer to https://aka.ms/vscode-docker-python-debug
-CMD ["python", "main.py","--monitor"]
+ENTRYPOINT ["python", "main.py"]
+CMD ["--monitor"]
