@@ -1,6 +1,6 @@
 {% set navigation_bar = [
-  ('/', 'index', 'Magnets'),
-  ('/torrents', 'downloads', 'Downloads'),
+  ( url_for('main.index'), 'index', 'Magnets'),
+  ( url_for('main.torrents'), 'torrents', 'Downloads'),
 ] -%}
 {% set active_page = active_page|default('index') -%}
 <!DOCTYPE html>
@@ -29,7 +29,7 @@
     <nav class="navbar navbar-default navbar-light bg-light navbar-expand-lg mb-4" aria-label="main navigation">
       <div class="container-fluid">
         <div class="navbar-header">
-          <a class="navbar-brand" href="/">Magnet2Torrent</a>
+          <a class="navbar-brand" href="{{ url_for('main.index') }}">Magnet2Torrent</a>
         </div>
         <div class="navbar-collapse collapse w-100 order-3 dual-collapse2" id="navbarToggler">
           <ul class="nav navbar-nav">

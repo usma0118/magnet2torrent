@@ -11,7 +11,7 @@ def create_app(SECRET_KEY):
     logging.basicConfig(level=logging.DEBUG)
 
     app.logger.debug('Validating settings')
-    user=config('user',default='')
+    user=config('web_username',default='')
     if user=='':
         app.logger.warning('User settings is empty defaulting to admin')
 
@@ -19,7 +19,7 @@ def create_app(SECRET_KEY):
     if password=='':
         app.logger.error('Password not defined')
     else:
-        app.logger.info('Password configured from config')
+        app.logger.info('Password configured')
 
     login_manager = LoginManager()
     login_manager.login_view = 'auth.login'
