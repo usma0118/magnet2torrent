@@ -5,6 +5,7 @@ from time import sleep
 import libtorrent as lt
 from decouple import config
 import shutil
+import math
 
 class InternalClient:
     settings = {
@@ -152,9 +153,12 @@ class TransmissionClient:
         '''
         Update the trackers for a torrent
         '''
-        tracker_chunks = [trackers[i:i + 4] for i in range(0, len(trackers), 9)]
-        for tracker_chunk in tracker_chunks:
-            self._client.change_torrent(torrent_id, trackerAdd= tracker_chunk)
+        tracker_slice=[]
+        for item in trackers:
+            tracker_slice.append(item)
+            if len(tracker_slice) == 9:
+                self._client.change_torrent(torrent_id,trackerAdd=tracker_slice)
+                tracker_slice= []
 
     def reannounce_torrent(self,torrent_id):
         self._client.reannounce_torrent(torrent_id)

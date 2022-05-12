@@ -36,20 +36,23 @@ class TrackerManager:
             self.logger.info('Processing Torrent: {0}'.format(torrent.name))
             if torrent.status != 'stopped' and torrent.status != 'seeding' and not torrent.is_finished and not torrent.isPrivate :
                 torrent_trackers=torrent._fields.get('trackers')
-                t= []
+                flatten_trackers= []
                 for tracker_array in torrent_trackers:
                     if not type(tracker_array) is list:
                         continue
                     for tracker in tracker_array:
-                        t.append(tracker['announce'])
-                uniquelist= set(global_trackers).intersection(t)
-                if len(uniquelist) == 0:
+                        flatten_trackers.append(tracker['announce'])
+                unique_trackers=[]
+                for gtracker in global_trackers:
+                    if gtracker not in flatten_trackers:
+                        unique_trackers.append(gtracker)
+                if len(unique_trackers) == 0:
                     self.logger.info('No new trackers to update')
                     continue
                 try:
-                    self.client.update_trackers(torrent.id,uniquelist)
+                    self.client.update_trackers(torrent.id,unique_trackers)
                     self.client.reannounce_torrent(torrent.id)
-                    self.logger.info('{0} Trackers updated'.format(len(uniquelist)))
+                    self.logger.info('{0} Trackers updated'.format(len(unique_trackers)))
                 except Exception as e:
                     self.logger.error('Failed to update trackers with error: {0}'.format(e))
             else:
