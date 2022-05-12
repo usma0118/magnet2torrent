@@ -2,6 +2,10 @@
 {% set active_page = "index" %}
 {% block content %}
 <style>
+.magnet-icon {
+  width: 15px;
+  display: block;
+  }
 .delete {
   transition: .5s ease;
   opacity: 0;
@@ -23,7 +27,7 @@
   </symbol>
 </svg>
 	{% for file in files %}
-  
+
   <!-- {% if file.status=="seeding" %}
     {% set progress_bar_class="bg-success active" %}
   {% elif file.status=="stopped" %}
@@ -37,8 +41,11 @@
     <div class="col-sm-6">
     <div class="card" style="width: 30rem;">
       <div class="card-body">
-        <h5 class="card-title {{ 'text-danger' if 'err' in file.name else 'text-success' }}">
-        {{file.name}}</h5>
+        <h6 class="card-title {{ 'text-danger' if 'err' in file.name else 'text-success' }}">{{file.name}}
+          <a href="{{ file.magnet_url }}">
+            <img class="magnet-icon" src="{{ url_for('static',filename='images/magnet-icon.png')}}" />
+          </a>
+        </h6>
         <h6 class="card-subtitle mb-2 text-muted">Status: File processing failed</h6>
         <p class="card-text">{{ file.created }}</p>
         <small class="text-muted">Last updated {{ file.modified }}</small>

@@ -1,13 +1,12 @@
 from pathlib import Path
 from urllib import request
-from decouple import config
 import os
 import os.path,time
+from decouple import config
 from flask import render_template
 from flask import Blueprint,redirect, url_for,request,flash
-from flask_login import login_required, current_user
+from flask_login import login_required
 from torrents.clients import TransmissionClient
-from torrents.models import torrent as models
 
 main = Blueprint('main', __name__)
 
@@ -24,7 +23,7 @@ def index():
         magnets += files
     files=[]
     for magnet in magnets:
-        files.append({'name':magnet.name,'created':time.ctime(os.path.getctime(magnet)),'modified':time.ctime(os.path.getmtime(magnet))})
+        files.append({'name':magnet.name,'magnet_url': magnet.read_text(),'created':time.ctime(os.path.getctime(magnet)),'modified':time.ctime(os.path.getmtime(magnet))})
 
     return render_template('index.html', files=files)
 
