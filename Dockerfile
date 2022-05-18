@@ -1,4 +1,4 @@
-FROM python:3.8-alpine3.15 AS python-alpine3
+FROM python:3.10.4-alpine3.15 AS python-alpine3
 # Setup env
 ENV LANG C.UTF-8
 ENV LC_ALL C.UTF-8
@@ -13,8 +13,7 @@ FROM python-alpine3 AS python-deps
 RUN echo "https://dl-cdn.alpinelinux.org/alpine/v$(cut -d'.' -f1,2 /etc/alpine-release)/community/" >> /etc/apk/repositories \
     && apk update
 
-RUN python3 -m pip install --upgrade pip setuptools wheel --no-cache-dir \
-    && python3 -m pip install pipenv --no-cache-dir
+RUN python3 -m pip install pipenv --no-cache-dir
 
 COPY Pipfile .
 COPY Pipfile.lock .
@@ -30,7 +29,7 @@ ENV FLASK_ENV=production
 # Creates a non-root user with an explicit UID and adds permission to access the /app folder
 RUN adduser -u 1001  magnet2torrent --disabled-password --no-create-home --gecos ""
 
-COPY --from=python-deps /root/.local/share/virtualenvs/*/lib/python3.8/site-packages /usr/local/lib/python3.8/site-packages
+COPY --from=python-deps /root/.local/share/virtualenvs/*/lib/python3.10/site-packages /usr/local/lib/python3.10/site-packages
 
 COPY --chown=magnet2torrent:magnet2torrent . /app
 
