@@ -8,10 +8,7 @@ on:
         - '.github/**'
         - '**/*.env'
     branches:
-      - 'main'
-      - 'ui**'
-      - 'web/ui**'
-      - 'feature/**'
+      - '*'
     tags:
       - 'v*.*.*'
   pull_request:
