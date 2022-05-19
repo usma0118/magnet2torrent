@@ -7,13 +7,13 @@ on:
         - '**/*.yaml'
         - '.github/**'
         - '**/*.env'
-    branches:
-      - '*'
+    # branches:
+    #   - '*'
     tags:
       - 'v*.*.*'
-  pull_request:
-    branches:
-      - 'main'
+  # pull_request:
+  #   branches:
+  #     - 'main'
 
 jobs:
 
@@ -42,13 +42,11 @@ jobs:
           type=semver,pattern={{major}}.{{minor}}
           type=semver,pattern={{major}}
           type=ref,event=tag
-          type=ref,event=branch
         #  type=sha
         flavor: |
           latest=auto
 
     - name: Login to DockerHub
-      if: github.event_name != 'pull_request'
       uses: docker/login-action@v2
       with:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
