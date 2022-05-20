@@ -43,6 +43,7 @@ class TrackerManager:
                     for tracker in tracker_array:
                         flatten_trackers.append(tracker['announce'])
                 unique_trackers=[]
+                self.logger.debug('Existing tracker count: {0}'.format(len(flatten_trackers)))
                 for gtracker in global_trackers:
                     if gtracker not in flatten_trackers:
                         unique_trackers.append(gtracker)
@@ -53,10 +54,11 @@ class TrackerManager:
                     self.client.update_trackers(torrent.id,unique_trackers)
                     self.client.reannounce_torrent(torrent.id)
                     self.logger.info('{0} Trackers updated'.format(len(unique_trackers)))
+                    self.logger.debug('Expected count: {0}'.format(len(unique_trackers)+ len(flatten_trackers)))
                 except Exception as e:
                     self.logger.error('Failed to update trackers with error: {0}'.format(e))
             else:
-                self.logger.warning('Skipping torrent is {0}'.format(torrent.status))
+                self.logger.debug('Expected count: {0}'.format(torrent.status))
 
 
     @cached(cache=TTLCache(maxsize=1500,ttl=86400))

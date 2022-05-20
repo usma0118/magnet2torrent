@@ -74,14 +74,16 @@ class InternalClient:
         # https://python.hotexamples.com/examples/libtorrent/-/parse_magnet_uri/python-parse_magnet_uri-function-examples.html
         tempdir = tempfile.mkdtemp()
         params.save_path=tempdir
-        ##if not params.isPrivate:
-            # TODO: Only add missing trackers
-        #params.trackers += self.trackers
+        #if params.keys.cont not params.isPrivate:
+        if isinstance(params, dict):
+            params['trackers'] += self.trackers
+        else:
+            params.trackers += self.trackers
 
         # download = self.findTorrentByHash(info_hash)
         handle = self.torrentclient.add_torrent(params)
         self.logger.info('Acquiring torrent metadata for hash {}'.format(params.info_hash))
-        max=5
+        max=10
         while not handle.has_metadata():
             try:
                 sleep(0.1)
