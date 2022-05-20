@@ -3,23 +3,27 @@ from web import routes
 from flask_login import LoginManager
 from web.auth import User
 from decouple import config
-import logging
+from flask.logging import default_handler
 
-def create_app(SECRET_KEY):
+def create_app(SECRET_KEY,logging_handler):
     app = Flask(__name__)
     app.config['SECRET_KEY']=SECRET_KEY
-    logging.basicConfig(level=logging.DEBUG)
+    app.logger.removeHandler(default_handler)
+    app.logger.handler= logging_handler
 
-    app.logger.debug('Validating settings')
-    user=config('web_username',default='')
-    if user=='':
-        app.logger.warning('User settings is empty defaulting to admin')
-
-    password=config('web_userpassword',default='')
-    if password=='':
-        app.logger.error('Password not defined')
+    if not config('web_auth',default='basic')=='basic':
+        app.config['LOGIN_DISABLED']=True
+        app.logger.warning('Swithing to OAuth2')
     else:
-        app.logger.info('Password configured')
+        user=config('web_username',default='')
+        if user=='':
+            app.logger.warning('User settings is empty defaulting to admin')
+
+        password=config('web_userpassword',default='')
+        if password=='':
+            app.logger.error('Password not defined')
+        else:
+            app.logger.info('Password configured')
 
     login_manager = LoginManager()
     login_manager.login_view = 'auth.login'

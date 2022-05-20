@@ -30,6 +30,7 @@ Environment variables are fetched via [dotenv](https://www.npmjs.com/package/dot
 
 - `log_level` (optional, defaults to `info`) : can be set to info,warning, error
 - `trackers` (optional, default is using [ngosang/trackerslist](https://github.com/ngosang/trackerslist))
+- `tracker_sync_interval` (optional, defaults to 30 mins)
 
 #### **Blackhole**
 

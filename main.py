@@ -93,7 +93,8 @@ class Monitor:
             client.magnet2torrent(args['magnet'], output)
 
     def run_web(self):
-        webapp=create_app(config('webserver_secret',default=str(uuid.uuid4())))
+        logger = logging.getLogger('waitress')
+        webapp=create_app(config('webserver_secret',default=str(uuid.uuid4())),logger)
         from waitress import serve
         serve(webapp, host='0.0.0.0',port=config('webserver_port',default='8080'),url_prefix=config('webserver_basepath',default=''))
 
@@ -102,25 +103,23 @@ def main():
     # set thread name
     threading.current_thread().name = 'MAIN'
     logger = logging.getLogger('MAIN')
+    coloredlogs.install(level=config('log_level',default='debug'),fmt='[%(asctime)s] %(name)s[%(process)d]: %(message)s')
+    logger.info('Starting program version: {0}')
     global APP
     try:
-        coloredlogs.install(level=config('log_level',default='debug'),fmt='[%(asctime)s] %(name)s[%(process)d]: %(message)s')
-        logger.info('Starting program version: {0}')
         logger.info('Setting log level: {0}'.format(config('log_level',default='debug')))
 
-        APP=Monitor()
-
-        transmission_enabled= config('transmission_host',default='')
-        if not transmission_enabled == '':
+        if not config('transmission_host',default='') == '':
             client=TransmissionClient(config('transmission_host'),config('transmission_user',default=''),config('transmission_password',default=''),config('transmission_port',default=9091))
-            tmanager=TrackerManager(client=client,interval=config('tracker_interval',default=3600))
+            tmanager=TrackerManager(client=client,interval=config('tracker_sync_interval',default=30*3600))
             trackerthread=threading.Thread(target=tmanager.start, daemon=True)
             trackerthread.name= 'Tracker Manager'
             trackerthread.start()
-
+        APP=Monitor()
         thread=threading.Thread(target=APP.run_web, daemon=True)
         thread.name='Web'
         thread.start()
+
         APP.start()
 
     except SystemExit as sysex:
