@@ -4,7 +4,6 @@ from pathlib import Path
 from argparse import ArgumentParser
 import shutil
 import sys
-import uuid
 import threading
 import logging
 import coloredlogs
@@ -16,7 +15,7 @@ from filesystem.FileSystemHandler import FileSystemHandler
 from torrents.trackers import TrackerManager
 from torrents.clients import InternalClient, TransmissionClient
 
-from web import create_app
+from web import start_server
 
 class Monitor:
     def __init__(self):
@@ -92,12 +91,6 @@ class Monitor:
         elif args['magnet'] is not None:
             client.magnet2torrent(args['magnet'], output)
 
-    def run_web(self):
-        logger = logging.getLogger('waitress')
-        webapp=create_app(config('webserver_secret',default=str(uuid.uuid4())),logger)
-        from waitress import serve
-        serve(webapp, host='0.0.0.0',port=config('webserver_port',default='8080'),url_prefix=config('webserver_basepath',default=''))
-
 
 def main():
     # set thread name
@@ -116,7 +109,7 @@ def main():
             trackerthread.name= 'Tracker Manager'
             trackerthread.start()
         APP=Monitor()
-        thread=threading.Thread(target=APP.run_web, daemon=True)
+        thread=threading.Thread(target= start_server, daemon=True)
         thread.name='Web'
         thread.start()
 
