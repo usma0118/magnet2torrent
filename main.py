@@ -15,7 +15,8 @@ from filesystem.FileSystemHandler import FileSystemHandler
 from torrents.trackers import TrackerManager
 from torrents.clients import InternalClient, TransmissionClient
 
-from web import start_server
+from web import start
+import web
 
 class Monitor:
     def __init__(self):
@@ -102,6 +103,10 @@ def main():
     try:
         logger.info('Setting log level: {0}'.format(config('log_level',default='debug')))
 
+        webserver=threading.Thread(target= web.start, daemon=True)
+        webserver.name='Web'
+        webserver.start()
+
         if not config('transmission_host',default='') == '':
             client=TransmissionClient(config('transmission_host'),config('transmission_user',default=''),config('transmission_password',default=''),config('transmission_port',default=9091))
             tmanager=TrackerManager(client=client,interval=config('tracker_sync_interval',default=30*3600))
@@ -109,11 +114,13 @@ def main():
             trackerthread.name= 'Tracker Manager'
             trackerthread.start()
         APP=Monitor()
-        thread=threading.Thread(target= start_server, daemon=True)
-        thread.name='Web'
-        thread.start()
-
-        APP.start()
+        # APP.start()
+        appthread=threading.Thread(target=APP.start, daemon=True)
+        appthread.name= 'Monitor'
+        appthread.start()
+        logger.info('Thread loading completed')
+        appthread.join()
+        logger.info('Program started')
 
     except SystemExit as sysex:
         logger.error('Critical error: {0}'.format(sysex))

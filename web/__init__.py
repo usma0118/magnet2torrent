@@ -47,7 +47,7 @@ def create_app(secret_key, logging_handler):
 
     return app
 
-def start_server():
+def start():
     logger = logging.getLogger('waitress')
     webapp = create_app(config('webserver_secret', default= str(uuid.uuid4())), logger)
     serve(webapp, host= '0.0.0.0', port= config('webserver_port', default= '8080'), url_prefix= config('webserver_basepath', default= ''))
