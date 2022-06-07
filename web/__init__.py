@@ -14,7 +14,7 @@ def create_app(secret_key, logging_handler):
     app.logger.removeHandler(default_handler)
     app.logger.handler = logging_handler
 
-    if not config('web_auth', default = 'basic') =='basic':
+    if config('web_auth', default = 'basic') =='oauth2':
         app.config['LOGIN_DISABLED']= True
         app.logger.warning('Swithing to OAuth2')
     else:
@@ -50,4 +50,4 @@ def create_app(secret_key, logging_handler):
 def start():
     logger = logging.getLogger('waitress')
     webapp = create_app(config('webserver_secret', default= str(uuid.uuid4())), logger)
-    serve(webapp, host= '0.0.0.0', port= config('webserver_port', default= '8080'), url_prefix= config('webserver_basepath', default= ''))
+    serve(webapp, host= '0.0.0.0', port= config('webserver_port', default = '8080'), url_prefix= config('webserver_basepath', default= ''))
