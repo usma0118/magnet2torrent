@@ -68,8 +68,8 @@
               {% else %}
                 {% set progress_bar_class="bg-info" %}
               {% endif %}
-              <div class="progress-bar progress-bar-striped {{ progress_bar_class }}" role="progressbar"
-              aria-valuenow="{{ torrent.progress }}" aria-valuemin="0" aria-valuemax="100" style='width:{{ torrent.progress if torrent.progress>0 else 100 }}%'>
+              <div class="progress-bar {{ progress_bar_class }}" role="progressbar"
+              aria-valuenow="{{ torrent.progress }}" aria-valuemin="0" aria-valuemax="100" style='width: {{ torrent.progress if torrent.progress>0 else 100 }}%'>
               {{ torrent.progress }}%{%- if torrent.stalled and not torrent.status=='seeding' -%} (Stalled){%-endif-%}
               </div>
             </div>
