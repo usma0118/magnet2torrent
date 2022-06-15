@@ -66,7 +66,7 @@ class Monitor:
             args['monitor']='monitor'
 
         client= InternalClient(self.logger,self.load_trackers())
-        if args['monitor'] is not None:
+        if args['monitor'] is not None and args['monitor']=='monitor':
             self.logger.info('Starting monitor mode')
             folder_watch=config('magnet_watch')
             self.logger.info('Blackhole folder: {0}'.format(os.path.abspath(folder_watch)))
