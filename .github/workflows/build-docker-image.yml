@@ -7,10 +7,12 @@ on:
         - '**/*.yaml'
         - '.github/**'
         - '**/*.env'
-    tags:
-      - 'v*.*.*'
+    # tags:
+    #   - 'v*.*.*'
+    # branches:
+    #   - release/*
     release:
-      types: [published]
+      types: [created,published]
 
 jobs:
 
