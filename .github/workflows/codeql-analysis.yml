@@ -9,19 +9,22 @@
 # the `language` matrix defined below to confirm you have the correct set of
 # supported CodeQL languages.
 #
-name: "Code Quality"
+name: "Quality Gatekeeper"
 
 on:
   push:
     paths-ignore:
         - '**/*.md'
+        - '**/*.yaml'
         - '.github/**'
+        - '.devcontainer/**'
+        - '**/*.env'
     branches: [ '*' ]
+    tags:
+      - 'v*.*.*'
   pull_request:
     # The branches below must be a subset of the branches above
     branches: [ 'main' ]
-  schedule:
-    - cron: '17 15 * * 0'
 
 jobs:
   analyze:

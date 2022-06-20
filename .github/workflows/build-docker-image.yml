@@ -1,22 +1,10 @@
 name: Docker container
 
 on:
-  push:
-    paths-ignore:
-        - '**/*.md'
-        - '**/*.yaml'
-        - '.github/**'
-        - '.devcontainer/**'
-        - '**/*.env'
-    # tags:
-    #   - 'v*.*.*'
-    # branches:
-    #   - release/*
   release:
     types: [published]
 
 jobs:
-
   docker:
     runs-on: ubuntu-latest
     strategy:
