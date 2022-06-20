@@ -6,6 +6,7 @@ on:
         - '**/*.md'
         - '**/*.yaml'
         - '.github/**'
+        - '.devcontainer/**'
         - '**/*.env'
     # tags:
     #   - 'v*.*.*'
