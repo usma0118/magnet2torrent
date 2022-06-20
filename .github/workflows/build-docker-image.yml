@@ -12,8 +12,8 @@ on:
     #   - 'v*.*.*'
     # branches:
     #   - release/*
-    release:
-      types: [created,published]
+  release:
+    types: [published]
 
 jobs:
 
