@@ -14,8 +14,14 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+        platforms: all
+
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v2
+      with:
+        install: true
 
     - name: Docker meta
       id: meta
@@ -44,11 +50,20 @@ jobs:
       uses: docker/build-push-action@v3
       with:
         context: .
+        platform: linux/amd64,linux/arm64
         push: ${{ github.event_name != 'pull_request' }}
         tags: ${{ steps.meta.outputs.tags }}
         labels: ${{ steps.meta.outputs.labels }}
         cache-from: type=gha
         cache-to: type=gha,mode=max
+
+      - name: Update repo description
+        uses: peter-evans/dockerhub-description@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          repository: usma0118/magnet2torrent
+
     - name: Run the Anchore scan action itself with GitHub Advanced Security code scanning integration enabled
       uses: anchore/scan-action@ecfd0e98932e57ea8f68f29c4f418fc41a8194db
       with:
