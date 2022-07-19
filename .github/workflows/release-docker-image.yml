@@ -58,13 +58,13 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-      - name: Update repo description
-        uses: peter-evans/dockerhub-description@v3
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-          repository: antaresinc/magnet2torrent
-          short-description: ${{ github.event.repository.description }}
+      # - name: Update repo description
+      #   uses: peter-evans/dockerhub-description@v3
+      #   with:
+      #     username: ${{ secrets.DOCKERHUB_USERNAME }}
+      #     password: ${{ secrets.DOCKERHUB_TOKEN }}
+      #     repository: antaresinc/magnet2torrent
+      #     short-description: ${{ github.event.repository.description }}
 
       - name: Image Digest
         run: echo ${{ steps.docker_build.outputs.digest }}
