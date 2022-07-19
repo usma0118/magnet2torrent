@@ -1,4 +1,4 @@
-name: Docker container
+name: Release
 
 on:
   release:
