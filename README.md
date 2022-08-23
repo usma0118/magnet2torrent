@@ -39,6 +39,7 @@ Environment variables are fetched via [dotenv](https://www.npmjs.com/package/dot
 - `torrent_blackhole` (optional, defaults to same value as `magnet_watch`) must be set to same blackhole directory as your torrent client.
 
 #### **Web server**
+
 - `webserver_basepath` (defaults to `/`)
 - `webserver_port` (defaults to `8080`)
 - `webserver_secret` (defaults to randmon generated value))
@@ -58,17 +59,15 @@ Application supports http proxy for fetching torrent info
 
 - **Transmission**
 
-    - `transmission_host` (`required` empty value will disbale this functionality)
-    - `transmission_port` (`optional` defaults to 9091)
-    - `transmission_path` (`optional` defaults to `/transmission`)
-    - `transmission_user` (`optional`)
-    - `transmission_password` (`optional`)
-
+  - `transmission_host` (`required` empty value will disbale this functionality)
+  - `transmission_port` (`optional` defaults to 9091)
+  - `transmission_path` (`optional` defaults to `/transmission`)
+  - `transmission_user` (`optional`)
+  - `transmission_password` (`optional`)
 
 #### Docker
 
-[Docker image](https://hub.docker.com/r/antaresinc/magnet2torrent) runs as uid 1001
-
+[Docker image](https://hub.docker.com/r/antaresinc/magnet2torrent) runs as non-root with uid 1001
 
 ## Licenses
 

@@ -8,7 +8,7 @@ repos:
         language: system
         types: [python]
         args:
-          - -d W1202,C0114,C0116
+          - -d W1202,C0114,C0116, C0326, C0301,E0401
           - -rn # Only display messages
           - -sn # Don't display the score
   - repo: https://github.com/pre-commit/pre-commit-hooks
