@@ -21,9 +21,6 @@ from web import start
 
 
 class Monitor:
-    '''
-    Main class for monitoring
-    '''
     def __init__(self):
         self.logger = logging.getLogger('Monitor worker')
         uid = os.getuid()
@@ -128,7 +125,7 @@ def main():
         level=config(
             'log_level',
             default='debug'),
-        fmt='[%(asctime)s] %(name)s[%(process)d]: %(message)s')
+        fmt='[%(asctime)s] %(name)s[%(process)d]: %(message)s', isatty=True)
     logger.info('Starting program version: {0}')
     global APP
     try:
