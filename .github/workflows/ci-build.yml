@@ -64,7 +64,7 @@ jobs:
           cache-to: type=gha,mode=max
 
       - name: Run the Anchore scan action itself with GitHub Advanced Security code scanning integration enabled
-        uses: anchore/scan-action@dafbc97d7259af88b61bd260f2fde565d0668a72
+        uses: anchore/scan-action@80eece9d936afbe0be4007a2ed073d7db8c2c140
         with:
           path: "."
           acs-report-enable: true
