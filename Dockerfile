@@ -1,4 +1,4 @@
-FROM python:3.10.4-alpine3.15 AS python-alpine3
+FROM python:3.11.0-alpine3.15 AS python-alpine3
 # Setup env
 ENV LANG C.UTF-8
 ENV LC_ALL C.UTF-8
