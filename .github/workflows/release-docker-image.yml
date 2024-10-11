@@ -70,7 +70,7 @@ jobs:
         run: echo ${{ steps.docker_build.outputs.digest }}
 
       - name: Run the Anchore scan action itself with GitHub Advanced Security code scanning integration enabled
-        uses: anchore/scan-action@dafbc97d7259af88b61bd260f2fde565d0668a72
+        uses: anchore/scan-action@a18ff2d1f2457caea9cd5a2e83608b68c71e995e
         with:
           path: "."
           acs-report-enable: true
